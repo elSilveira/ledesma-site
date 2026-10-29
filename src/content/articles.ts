@@ -231,6 +231,88 @@ export const artigos: Artigo[] = [
     referencias: ["Constituição Federal, art. 7º, XIII e XVI", "CLT, arts. 59 e 74"],
   },
   {
+    slug: "verbas-rescisorias-dispensa-sem-justa-causa",
+    titulo: "Verbas rescisórias na dispensa sem justa causa",
+    descricao:
+      "Saldo de salário, aviso prévio, férias, 13º e FGTS: entenda o que é devido no fim do contrato sem justa causa e qual é o prazo de pagamento.",
+    resumo: "O que é devido quando o contrato termina por iniciativa do empregador e qual é o prazo para o pagamento.",
+    area: "direito-trabalhista",
+    publicadoEm: "2026-10-29",
+    atualizadoEm: "2026-10-29",
+    revisadoPor: null,
+    palavrasChave: ["verbas rescisórias", "dispensa sem justa causa", "aviso prévio", "multa do FGTS", "advogado trabalhista Toledo"],
+    secoes: [
+      {
+        titulo: "O que é devido",
+        blocos: [
+          { tipo: "p", texto: "Na dispensa sem justa causa, as verbas rescisórias incluem, como regra geral:" },
+          {
+            tipo: "lista",
+            itens: [
+              "saldo de salário pelos dias trabalhados no mês da rescisão;",
+              "aviso prévio, trabalhado ou indenizado;",
+              "13º salário proporcional aos meses trabalhados no ano;",
+              "férias vencidas, se houver, e férias proporcionais, sempre acrescidas de um terço (CF, art. 7º, XVII);",
+              "depósito do FGTS do mês da rescisão e indenização de 40% sobre o saldo da conta vinculada (Lei nº 8.036/1990, art. 18, § 1º).",
+            ],
+          },
+        ],
+      },
+      {
+        titulo: "Aviso prévio proporcional",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "O aviso prévio é de 30 dias para quem tem até um ano de serviço na mesma empresa. A Lei nº 12.506/2011 acrescenta três dias por ano completo de serviço, até o máximo de 90 dias.",
+          },
+        ],
+      },
+      {
+        titulo: "Prazo para pagamento",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "A entrega dos documentos da rescisão e o pagamento das verbas devem ocorrer em até dez dias contados do término do contrato (CLT, art. 477, § 6º). O atraso sujeita o empregador a multa em favor do empregado no valor de um salário, salvo quando o próprio trabalhador der causa à mora (art. 477, § 8º).",
+          },
+        ],
+      },
+      {
+        titulo: "FGTS e seguro-desemprego",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "A dispensa sem justa causa permite o saque do saldo do FGTS (Lei nº 8.036/1990, art. 20, I). O seguro-desemprego depende do cumprimento dos requisitos da Lei nº 7.998/1990, como o tempo mínimo de trabalho exigido para cada solicitação.",
+          },
+        ],
+      },
+      {
+        titulo: "Rescisão por acordo",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "Desde a Lei nº 13.467/2017, empregado e empregador podem encerrar o contrato por acordo (CLT, art. 484-A). Nesse caso, o aviso prévio indenizado e a indenização sobre o FGTS são pagos pela metade, as demais verbas são devidas integralmente, é possível movimentar até 80% do saldo do FGTS e não há direito ao seguro-desemprego.",
+          },
+          {
+            tipo: "nota",
+            texto:
+              "Convenções coletivas podem prever direitos adicionais, e o cálculo depende do histórico de cada contrato. Este conteúdo é informativo e não substitui a análise individual do caso.",
+          },
+        ],
+      },
+    ],
+    referencias: [
+      "Constituição Federal, art. 7º, XVII e XXI",
+      "CLT, arts. 477 e 484-A",
+      "Lei nº 12.506/2011 (aviso prévio proporcional)",
+      "Lei nº 8.036/1990 (FGTS), arts. 18 e 20",
+      "Lei nº 7.998/1990 (seguro-desemprego)",
+    ],
+  },
+  {
     slug: "bpc-loas-quem-tem-direito",
     titulo: "BPC/LOAS: quem tem direito ao benefício",
     descricao:
@@ -304,6 +386,90 @@ export const artigos: Artigo[] = [
       },
     ],
     referencias: ["Lei nº 8.742/1993 (LOAS), arts. 20 e 21", "Constituição Federal, art. 203, V"],
+  },
+  {
+    slug: "aposentadoria-rural-por-idade-requisitos",
+    titulo: "Aposentadoria rural por idade: requisitos",
+    descricao:
+      "Idade mínima, tempo de atividade rural e documentos: entenda as regras gerais da aposentadoria por idade do trabalhador rural e do segurado especial.",
+    resumo: "Idade mínima, comprovação da atividade no campo e os documentos que costumam ser usados como prova.",
+    area: "direito-previdenciario",
+    publicadoEm: "2026-10-29",
+    atualizadoEm: "2026-10-29",
+    revisadoPor: null,
+    palavrasChave: ["aposentadoria rural", "segurado especial", "trabalhador rural", "INSS", "advogada previdenciária Toledo"],
+    secoes: [
+      {
+        titulo: "Idade mínima",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "O trabalhador rural tem direito à aposentadoria por idade com cinco anos a menos que o trabalhador urbano: 60 anos para homens e 55 anos para mulheres (CF, art. 201, § 7º, II, e Lei nº 8.213/1991, art. 48, § 1º).",
+          },
+        ],
+      },
+      {
+        titulo: "Quem é segurado especial",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "A Lei nº 8.213/1991 (art. 11, VII) considera segurado especial, entre outros, o produtor rural, parceiro, meeiro ou arrendatário que explora atividade agropecuária em área de até quatro módulos fiscais, individualmente ou em regime de economia familiar, além do pescador artesanal. O cônjuge e os filhos que trabalham com o grupo familiar também podem ser segurados especiais.",
+          },
+        ],
+      },
+      {
+        titulo: "Tempo de atividade rural",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "O segurado especial não precisa comprovar contribuições mensais. Ele deve demonstrar o exercício de atividade rural, ainda que de forma descontínua, no período imediatamente anterior ao requerimento ou ao cumprimento da idade, por tempo igual à carência do benefício, que é de 180 meses (arts. 25, II, 39, I, e 48, § 2º). Nesse caso, o valor da aposentadoria é de um salário mínimo.",
+          },
+        ],
+      },
+      {
+        titulo: "Como comprovar",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "A lei exige início de prova material: a prova exclusivamente testemunhal não basta (Lei nº 8.213/1991, art. 55, § 3º, e Súmula 149 do STJ). Entre os documentos que costumam ser usados estão:",
+          },
+          {
+            tipo: "lista",
+            itens: [
+              "contratos de arrendamento, parceria ou comodato rural;",
+              "bloco de notas do produtor rural e notas fiscais de venda da produção;",
+              "documentos do imóvel rural, como escritura ou certificado de cadastro (CCIR);",
+              "registros civis e escolares em que conste a profissão de lavrador ou agricultor;",
+              "autodeclaração do segurado especial, que é confrontada com as bases de dados do governo (art. 38-B).",
+            ],
+          },
+        ],
+      },
+      {
+        titulo: "Quem trabalhou no campo e na cidade",
+        blocos: [
+          {
+            tipo: "p",
+            texto:
+              "Quem não reúne tempo rural suficiente pode ter direito à aposentadoria por idade híbrida, que soma períodos de atividade rural e urbana (art. 48, § 3º), com idade mínima diferente da aposentadoria rural.",
+          },
+          {
+            tipo: "nota",
+            texto:
+              "A análise dos documentos e do período a ser comprovado varia conforme a história de trabalho de cada pessoa. Este conteúdo é informativo e não substitui a orientação individual.",
+          },
+        ],
+      },
+    ],
+    referencias: [
+      "Constituição Federal, art. 201, § 7º, II",
+      "Lei nº 8.213/1991, arts. 11, VII, 25, 38-B, 39, 48 e 55, § 3º",
+      "Súmula 149 do Superior Tribunal de Justiça",
+    ],
   },
 ];
 

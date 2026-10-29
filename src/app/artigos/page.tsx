@@ -24,22 +24,40 @@ export default function ArtigosPage() {
 
       <section aria-label="Lista de artigos" className="bg-ink py-20 md:py-24">
         <div className="container-site">
-          <nav aria-label="Artigos por área" className="mb-12 flex flex-wrap gap-3">
+          <nav aria-label="Artigos por área" className="flex flex-wrap gap-3">
             {areas.map((a) => (
-              <Link
+              <a
                 key={a.slug}
-                href={`${areaHref(a.slug)}#artigos-area`}
+                href={`#artigos-${a.slug}`}
                 className="inline-flex items-center gap-2 border border-gold/25 px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-paper transition-colors hover:border-gold hover:text-ivory"
               >
                 <Icon name={a.icone} className="size-4 text-gold" /> {a.nomeCurto}
-              </Link>
+              </a>
             ))}
           </nav>
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {lista.map((a, i) => (
-              <ArticleCard key={a.slug} artigo={a} index={i % 3} headingLevel="h2" />
-            ))}
-          </div>
+
+          {areas.map((area) => {
+            const daArea = lista.filter((a) => a.area === area.slug);
+            if (daArea.length === 0) return null;
+            return (
+              <section key={area.slug} id={`artigos-${area.slug}`} aria-labelledby={`titulo-${area.slug}`} className="mt-16 scroll-mt-28 border-t border-white/5 pt-12 first-of-type:mt-12">
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+                  <h2 id={`titulo-${area.slug}`} className="flex items-center gap-3 text-3xl md:text-4xl">
+                    <Icon name={area.icone} className="size-7 text-gold" /> {area.nome}
+                  </h2>
+                  <Link href={areaHref(area.slug)} className="group inline-flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-gold hover:text-ivory">
+                    Conheça a área
+                    <Icon name="seta" className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </div>
+                <div className="mt-8 grid gap-5 md:grid-cols-2">
+                  {daArea.map((a, i) => (
+                    <ArticleCard key={a.slug} artigo={a} index={i} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </section>
 
