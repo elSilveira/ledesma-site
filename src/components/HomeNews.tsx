@@ -15,7 +15,7 @@ export async function HomeNews() {
       rotulo: "Mais recentes",
       descricao: "As publicações mais recentes de todas as fontes.",
       href: noticiasHref(),
-      itens: itens.slice(0, 6),
+      itens: itens.slice(0, 3),
     },
     ...fontesNoticias
       .map((f) => ({
@@ -23,7 +23,7 @@ export async function HomeNews() {
         rotulo: f.nome,
         descricao: `${f.rotuloTipo} · ${f.local}`,
         href: noticiasHref(f.id),
-        itens: itens.filter((n) => n.fonte === f.id).slice(0, 6),
+        itens: itens.filter((n) => n.fonte === f.id).slice(0, 3),
       }))
       .filter((g) => g.itens.length > 0),
   ];

@@ -45,7 +45,6 @@ export function NewsTabs({ grupos }: { grupos: GrupoNoticias[] }) {
             }`}
           >
             {g.rotulo}
-            <span className="ml-2 text-gold/80">{g.itens.length}</span>
           </button>
         ))}
       </div>
@@ -53,7 +52,7 @@ export function NewsTabs({ grupos }: { grupos: GrupoNoticias[] }) {
       <div role="tabpanel" id={`${uid}-painel`} aria-labelledby={`${uid}-tab-${grupo.id}`} tabIndex={0} className="mt-8 focus:outline-none">
         <p className="text-sm text-muted">{grupo.descricao}</p>
         <ul className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {grupo.itens.slice(0, 6).map((n) => (
+          {grupo.itens.slice(0, 3).map((n) => (
             <li key={n.id}>
               <NewsCard noticia={n} />
             </li>
