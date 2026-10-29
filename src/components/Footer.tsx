@@ -19,11 +19,10 @@ export function Footer() {
     <footer className="relative mt-auto border-t-2 border-gold/70 bg-coal text-[0.95rem]">
       <div className="container-site">
         {/* Navegação e equipe */}
-        <div className="grid gap-7 py-6 md:grid-cols-2 md:gap-12">
-          <nav aria-label="Rodapé" className="grid grid-cols-2 gap-6">
-            <div>
+        <div className="grid gap-8 py-8 md:grid-cols-2 md:gap-12">
+          <nav aria-label="Rodapé">
             <h2 className={titulo}>Explore</h2>
-            <ul className="mt-2.5 space-y-1">
+            <ul className="mt-3 space-y-1.5">
               {explore.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-ivory transition-colors hover:text-gold">
@@ -32,10 +31,8 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            </div>
-            <div>
-            <h2 className={titulo}>Áreas de atuação</h2>
-            <ul className="mt-2.5 space-y-1">
+            <h2 className={`${titulo} mt-6`}>Áreas de atuação</h2>
+            <ul className="mt-3 space-y-1.5">
               {areas.map((a) => (
                 <li key={a.slug}>
                   <Link href={areaHref(a.slug)} className="text-paper transition-colors hover:text-gold">
@@ -44,31 +41,28 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            </div>
           </nav>
 
           <div>
             <h2 className={titulo}>Fale com nossa equipe</h2>
-            <ul className="mt-2.5">
+            <ul className="mt-3">
               {equipe.map((p) => {
                 const wa = linkWhatsApp(p);
                 return (
-                  <li key={p.slug} className="border-b border-white/10 py-2 first:pt-0 last:border-b-0 last:pb-0">
+                  <li key={p.slug} className="border-b border-white/10 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
                     <p className="text-ivory">{nomeComTratamento(p)}</p>
-                    <p className="flex flex-wrap items-center gap-x-4 text-xs text-muted">
-                      {formatarOAB(p.oab)}
-                      {wa && (
-                        <a
-                          href={wa}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-gold transition-colors hover:text-ivory"
-                          aria-label={`WhatsApp de ${p.nomeCurto} (abre em nova aba)`}
-                        >
-                          WhatsApp <Icon name="externo" className="size-3" />
-                        </a>
-                      )}
-                    </p>
+                    <p className="text-xs text-muted">{formatarOAB(p.oab)}</p>
+                    {wa && (
+                      <a
+                        href={wa}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-1.5 text-gold transition-colors hover:text-ivory"
+                        aria-label={`WhatsApp de ${p.nomeCurto} (abre em nova aba)`}
+                      >
+                        WhatsApp <Icon name="externo" className="size-3.5" />
+                      </a>
+                    )}
                   </li>
                 );
               })}
@@ -77,15 +71,15 @@ export function Footer() {
         </div>
 
         {/* Sedes e consulta processual */}
-        <div className="grid gap-7 border-t border-white/10 py-5 md:grid-cols-2 md:gap-12">
+        <div className="grid gap-8 border-t border-white/10 py-7 md:grid-cols-2 md:gap-12">
           <div>
             <h2 className={titulo}>Nossas sedes</h2>
-            <ul className="mt-2.5 space-y-1">
+            <ul className="mt-3 space-y-2.5">
               {sedes.map((s) => (
-                <li key={s.slug} className="flex flex-wrap items-baseline gap-x-2">
-                  <span className="text-paper">
+                <li key={s.slug}>
+                  <p className="text-paper">
                     {s.cidade} – {s.uf}
-                  </span>
+                  </p>
                   <a
                     href={linkMapa(s)}
                     target="_blank"
@@ -110,7 +104,7 @@ export function Footer() {
 
           <div>
             <h2 className={titulo}>Consulta processual</h2>
-            <ul className="mt-2.5 flex flex-wrap gap-2">
+            <ul className="mt-3 flex flex-wrap gap-2">
               {site.consultaProcessual.map((c) => (
                 <li key={c.href}>
                   <a
@@ -125,7 +119,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <ul className="mt-3 flex gap-2">
+            <ul className="mt-4 flex gap-2">
               <li>
                 <a
                   href={site.redes.instagram}
@@ -153,7 +147,7 @@ export function Footer() {
         </div>
 
         {/* Rodapé final */}
-        <div className="flex flex-col gap-2 border-t border-white/10 py-3.5 text-xs text-muted md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-2 border-t border-white/10 py-4 text-xs text-muted md:flex-row md:items-start md:justify-between">
           <div>
             <p>
               © {site.razaoSocial} · Todos os direitos reservados
