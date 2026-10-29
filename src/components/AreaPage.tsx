@@ -13,6 +13,7 @@ import {
 import { type Secao, areas, areaHref, getArea } from "@/content/areas";
 import { artigosPorArea } from "@/content/articles";
 import { faqJsonLd } from "@/lib/seo";
+import { AreaNews } from "./AreaNews";
 import { ArticleCard } from "./ArticleCard";
 import { ButtonExternal } from "./Button";
 import { ContactBand } from "./ContactBand";
@@ -140,8 +141,10 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
         </div>
       </section>
 
+      <AreaNews slug={slug} />
+
       {relacionados.length > 0 && (
-        <section aria-labelledby="artigos-area" className="border-t border-gold/10 bg-coal py-20 md:py-24">
+        <section aria-labelledby="artigos-area" className="border-t border-gold/10 bg-ink py-20 md:py-24">
           <div className="container-site">
             <p className="eyebrow" data-reveal>
               Artigos
