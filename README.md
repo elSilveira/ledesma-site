@@ -46,7 +46,9 @@ Logotipo e fotografias foram obtidos do site oficial atual (ledesma.adv.br). O l
 
 `/noticias` reúne os feeds RSS do STJ, do ConJur e do Migalhas; cada fonte tem sua página (`/noticias/<id>`) e uma aba
 na página inicial. Os feeds são lidos no servidor e ficam em cache por 30 minutos (`cacheLife` em `src/lib/noticias.ts`).
-Só são exibidos manchete, resumo curto, data e link para a matéria original. Uma fonte fora do ar é omitida, sem
+Só são exibidos manchete, resumo curto, imagem de destaque, data e link para a matéria original. A imagem vem do
+próprio feed ou, quando ele não traz nenhuma (Migalhas), da `og:image` da página da matéria, e é carregada direto do
+servidor da fonte. A página `/noticias` mostra 6 notícias e o botão "Carregar mais" acrescenta 6 por vez. Uma fonte fora do ar é omitida, sem
 quebrar a página. A classificação por área do escritório, tribunal e menção a PR/MS é automática, feita por palavras-chave.
 
 Em hospedagem serverless, o cache em memória não é compartilhado entre instâncias; nesse caso, considere `use cache: remote`.

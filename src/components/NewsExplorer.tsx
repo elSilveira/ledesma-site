@@ -8,7 +8,7 @@ import { buttonClasses } from "./Button";
 import { Icon } from "./icons";
 import { NewsCard } from "./NewsCard";
 
-const POR_PAGINA = 12;
+const POR_PAGINA = 6;
 
 const ROTULOS_TRIBUNAL: Record<Tribunal, string> = {
   STF: "STF",

@@ -8,8 +8,8 @@ export type { Noticia, Tribunal };
 /**
  * Leitura dos canais RSS das fontes de notícias.
  *
- * Exibimos apenas manchete, resumo curto, data e link para a matéria original:
- * o conteúdo completo permanece no site de cada veículo.
+ * Exibimos apenas manchete, resumo curto, imagem de destaque (servida pela própria fonte), data e link para a
+ * matéria original: o conteúdo completo permanece no site de cada veículo.
  * Os feeds são lidos no servidor e mantidos em cache; uma fonte fora do ar é simplesmente omitida.
  */
 
@@ -49,6 +49,7 @@ async function lerFonte(fonte: FonteNoticias): Promise<{ fonte: string; ok: bool
     const xml = (await res.text()).replace(/^﻿/, "");
     if (!/<(rss|feed|rdf:RDF)\b/i.test(xml.slice(0, 2000))) throw new Error("resposta não é um feed");
     const itens = parseFeed(xml, fonte).slice(0, fonte.limite);
+    await completarImagens(itens);
     return { fonte: fonte.id, ok: itens.length > 0, itens };
   } catch (e) {
     console.warn(`[noticias] fonte "${fonte.id}" indisponível: ${e instanceof Error ? e.message : e}`);
@@ -94,6 +95,7 @@ export function parseFeed(xml: string, fonte: Pick<FonteNoticias, "id">): Notici
       link,
       data: dataBruta ? parseData(limparTexto(dataBruta)) : null,
       autor: limparTexto(campo(b, "dc:creator") ?? campo(b, "author") ?? "") || null,
+      imagem: imagemDoItem(b, link),
       areas: classificarAreas(texto),
       tribunais,
       regional: REGIONAL.test(semAcento(texto)) || /\b(TJPR|TJMS|TRF-?[34]|TRT-?(9|24))\b/.test(texto),
@@ -115,6 +117,59 @@ function linkDoItem(b: string): string | null {
   try {
     const u = new URL(candidato);
     return u.protocol === "https:" || u.protocol === "http:" ? u.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Imagens                                                             */
+/* ------------------------------------------------------------------ */
+
+/** Imagem declarada no item (media:content, enclosure) ou a primeira do conteúdo. */
+function imagemDoItem(b: string, link: string): string | null {
+  const declarada =
+    b.match(/<media:(?:content|thumbnail)\b[^>]*\burl="([^"]+)"/i)?.[1] ??
+    b.match(/<enclosure\b(?=[^>]*\btype="image\/)[^>]*\burl="([^"]+)"/i)?.[1];
+  if (declarada) return urlImagem(declarada, link);
+  const html = decodificar(`${campo(b, "content:encoded") ?? ""} ${campo(b, "description") ?? ""}`);
+  for (const m of html.matchAll(/<img\b[^>]*?\bsrc="([^"]+)"/gi)) {
+    const url = urlImagem(m[1], link);
+    if (url) return url;
+  }
+  return null;
+}
+
+function urlImagem(src: string, base: string): string | null {
+  try {
+    const u = new URL(decodificar(src.trim()), base);
+    // Ignora data: URIs, logotipos em SVG e pixels de rastreamento
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    if (/\.svg$|pixel|tracking|gravatar|emoji/i.test(u.pathname)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
+
+/** Para itens sem imagem no feed (ex.: Migalhas), usa a og:image da página da matéria. */
+async function completarImagens(itens: Noticia[]) {
+  const pendentes = itens.filter((n) => !n.imagem);
+  const simultaneas = 6;
+  for (let i = 0; i < pendentes.length; i += simultaneas) {
+    await Promise.all(pendentes.slice(i, i + simultaneas).map(async (n) => (n.imagem = await ogImage(n.link))));
+  }
+}
+
+async function ogImage(link: string): Promise<string | null> {
+  try {
+    const res = await fetch(link, { headers: { "User-Agent": USER_AGENT, Accept: "text/html" }, signal: AbortSignal.timeout(8_000) });
+    if (!res.ok) return null;
+    const html = (await res.text()).slice(0, 200_000);
+    const meta =
+      html.match(/<meta\b[^>]*\bproperty="og:image"[^>]*\bcontent="([^"]+)"/i)?.[1] ??
+      html.match(/<meta\b[^>]*\bcontent="([^"]+)"[^>]*\bproperty="og:image"/i)?.[1];
+    return meta ? urlImagem(meta, link) : null;
   } catch {
     return null;
   }

@@ -64,8 +64,8 @@ export async function NoticiasView({ fonte }: { fonte?: FonteNoticias }) {
 
             <div className="mt-12 border-t border-white/5 pt-6 text-xs leading-relaxed text-muted">
               <p>
-                Manchetes e resumos obtidos automaticamente dos canais RSS públicos de cada fonte. O conteúdo é de responsabilidade dos respectivos veículos e
-                órgãos, e a leitura integral é feita no site de origem. A classificação por área é automática e serve apenas para orientar a navegação. A
+                Manchetes, resumos e imagens obtidos automaticamente dos canais RSS e das páginas públicas de cada fonte. O conteúdo e as imagens pertencem aos
+                respectivos veículos e órgãos, e a leitura integral é feita no site de origem. A classificação por área é automática e serve apenas para orientar a navegação. A
                 seleção não representa opinião da Ledesma Advocacia.
               </p>
               <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">

@@ -13,6 +13,8 @@ export type Noticia = {
   /** ISO 8601 */
   data: string | null;
   autor: string | null;
+  /** Imagem de destaque publicada pela própria fonte (exibida a partir do servidor dela). */
+  imagem: string | null;
   areas: AreaSlug[];
   tribunais: Tribunal[];
   /** Menciona Paraná, Mato Grosso do Sul ou os tribunais dessas regiões. */
