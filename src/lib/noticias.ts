@@ -25,7 +25,7 @@ export async function getNoticias(): Promise<Noticias> {
   "use cache";
   cacheLife({ stale: 300, revalidate: 1800, expire: 86400 });
 
-  const resultados = await Promise.all(fontesNoticias.map(lerFonte));
+  const resultados = await Promise.all(fontesNoticias.map((f) => lerFonte(f)));
   const vistos = new Set<string>();
   const itens = resultados
     .flatMap((r) => r.itens)
@@ -39,12 +39,23 @@ export async function getNoticias(): Promise<Noticias> {
   };
 }
 
-async function lerFonte(fonte: FonteNoticias): Promise<{ fonte: string; ok: boolean; itens: Noticia[] }> {
+async function lerFonte(fonte: FonteNoticias, tentativa = 1): Promise<{ fonte: string; ok: boolean; itens: Noticia[] }> {
+  let res: Response;
   try {
-    const res = await fetch(fonte.feed, {
+    res = await fetch(fonte.feed, {
       headers: { "User-Agent": USER_AGENT, Accept: "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8" },
       signal: AbortSignal.timeout(12_000),
     });
+  } catch (e) {
+    // Falha de rede costuma ser passageira: tenta mais uma vez antes de omitir a fonte
+    if (tentativa === 1) {
+      await new Promise((r) => setTimeout(r, 3_000));
+      return lerFonte(fonte, 2);
+    }
+    console.warn(`[noticias] fonte "${fonte.id}" indisponível: ${e instanceof Error ? e.message : e}`);
+    return { fonte: fonte.id, ok: false, itens: [] };
+  }
+  try {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const xml = (await res.text()).replace(/^﻿/, "");
     if (!/<(rss|feed|rdf:RDF)\b/i.test(xml.slice(0, 2000))) throw new Error("resposta não é um feed");
