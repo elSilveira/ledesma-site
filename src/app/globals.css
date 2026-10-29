@@ -1,26 +1,211 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Identidade Ledesma Advocacia
+ * Base: preto e grafite. Cor institucional: bordô #801718 (cor primária do site atual).
+ * Dourado champanhe apenas em detalhes finos: filetes, ícones e rótulos.
+ * Tipografia institucional do site atual: PT Serif (títulos) e Montserrat (texto).
+ */
+@theme {
+  --color-ink: #0a0a0b;
+  --color-coal: #101012;
+  --color-graphite: #16161a;
+  --color-slate: #1f1f24;
+  --color-steel: #2c2c33;
+
+  --color-ivory: #ece6da;
+  --color-paper: #cbc5b9;
+  --color-muted: #949087;
+
+  --color-gold: #c4a66e;
+  --color-gold-soft: #9c8352;
+
+  --color-wine: #801718;
+  --color-wine-bright: #9e2023;
+  --color-wine-deep: #4d0d0e;
+  --color-wine-text: #e0787b;
+
+  --font-serif: var(--font-pt-serif), "Georgia", serif;
+  --font-sans: var(--font-montserrat), "Segoe UI", system-ui, sans-serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    color: var(--color-ivory);
+    font-weight: 400;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-wine);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container-site {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-site {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Rótulo em caixa alta com filete dourado */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  /* Cartão escuro com filete dourado sutil */
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--color-graphite), var(--color-coal));
+    border: 1px solid color-mix(in oklab, var(--color-gold) 14%, transparent);
+    transition:
+      border-color 400ms var(--ease-out-soft),
+      transform 400ms var(--ease-out-soft),
+      background 400ms var(--ease-out-soft);
+  }
+  .card-interactive:hover,
+  .card-interactive:focus-within {
+    border-color: color-mix(in oklab, var(--color-gold) 45%, transparent);
+    transform: translateY(-3px);
+  }
+
+  .hairline {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-gold) 45%, transparent), transparent);
+  }
+
+  /* Texto corrido dos artigos */
+  .prose-ledesma > * + * {
+    margin-top: 1.15rem;
+  }
+  .prose-ledesma h2 {
+    font-size: 1.6rem;
+    margin-top: 2.75rem;
+  }
+  .prose-ledesma ul {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .prose-ledesma li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .prose-ledesma li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--color-gold);
+  }
+
+  /* Textura de grão quase imperceptível para profundidade */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Revelação suave ao rolar. Só oculta quando o JavaScript está ativo (classe .js no <html>). */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 900ms var(--ease-out-soft),
+      transform 900ms var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-rise {
+    animation: hero-rise 1100ms var(--ease-out-soft) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

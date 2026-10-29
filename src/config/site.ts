@@ -1,0 +1,240 @@
+/**
+ * Dados institucionais centralizados da Ledesma Advocacia.
+ *
+ * REGRA: nenhum dado é inventado. Campos com valor `null` estão PENDENTES
+ * e simplesmente não aparecem no site publicado. Em desenvolvimento, eles
+ * aparecem como marcadores tracejados ("Pendente: …") para facilitar a revisão.
+ *
+ * Execute `npm run pendencias` para listar tudo o que ainda falta preencher.
+ *
+ * Fontes:
+ *  - [cliente]  dados enviados pelo escritório para este projeto
+ *  - [site]     dados publicados em https://ledesma.adv.br/ (consultado em out/2026)
+ *
+ * Este arquivo não importa outros módulos: o script de pendências o lê diretamente com Node.
+ */
+
+export type AreaSlug = "direito-criminal-e-penal" | "direito-trabalhista" | "direito-previdenciario";
+
+/** Público atendido na área trabalhista. `null` = ainda não confirmado pelo escritório. */
+export type PublicoTrabalhista = "trabalhadores" | "empresas" | "ambos" | null;
+
+export type RegistroOAB = { uf: string; numero: string };
+
+export type Integrante = {
+  slug: string;
+  tratamento: "Dr." | "Dra.";
+  /** Nome curto usado em botões e chamadas. */
+  nomeCurto: string;
+  /** [site] nome completo, conforme publicado no site atual. Confirmar grafia antes da publicação. */
+  nomeCompleto: string;
+  /** [cliente] confirmada pelo envio dos números de inscrição na OAB. */
+  profissao: "Advogado" | "Advogada";
+  oab: RegistroOAB[];
+  area: AreaSlug;
+  /** Somente dígitos, com DDI. [cliente] */
+  telefone: string;
+  /** Exibição do telefone, como informado pelo cliente. */
+  telefoneExibicao: string;
+  /** O número tem WhatsApp? [site] os três números constam como WhatsApp no site atual. */
+  whatsapp: boolean;
+  foto: { src: string; alt: string };
+  /** Pendentes: preencher somente com informações verificadas. */
+  minibio: string | null;
+  formacao: string[] | null;
+  /** Títulos de especialização só podem ser divulgados se o profissional os possuir formalmente. */
+  titulos: string[] | null;
+};
+
+export type Sede = {
+  slug: string;
+  cidade: string;
+  uf: string;
+  logradouro: string;
+  numero: string;
+  bairro: string;
+  cep: string | null;
+  telefone: string | null;
+  horario: string | null;
+};
+
+const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+
+export const site = {
+  nome: "Ledesma Advocacia",
+  /** [site] razão social exibida no rodapé do site atual. */
+  razaoSocial: "Ledesma Advocacia S/S",
+
+  /** Domínio ainda não definido. Configure NEXT_PUBLIC_SITE_URL no ambiente de produção. */
+  url: envUrl || "http://localhost:3000",
+  /** Só permite indexação quando o domínio definitivo estiver configurado. */
+  indexavel: Boolean(envUrl) && process.env.NEXT_PUBLIC_ALLOW_INDEXING !== "false",
+  verificacaoGoogle: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || null,
+
+  locale: "pt_BR",
+  descricao:
+    "Ledesma Advocacia: escritório com sedes em Toledo (PR) e Iguatemi (MS), com atuação em Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário.",
+
+  /** [site] valores declarados no site atual. */
+  valores: ["Ética", "Transparência", "Eficiência"],
+  /** [site] o site atual informa atendimento a distância ("advocacia digital") para todo o Brasil. */
+  atendimentoOnline: true,
+
+  /** Pendentes */
+  cnpj: null as string | null,
+  registroSociedadeOAB: null as string | null,
+  email: null as string | null,
+  /** Pendente: há divergência no site atual ("mais de 10 anos" e "mais de 15 anos"). Não publicar até confirmar. */
+  anosDeAtuacao: null as number | null,
+  fundacao: null as string | null,
+
+  publicoTrabalhista: null as PublicoTrabalhista,
+
+  redes: {
+    /** [site] */
+    instagram: "https://www.instagram.com/ledesma.advocacia/",
+    /** [site] */
+    facebook: "https://www.facebook.com/profile.php?id=100080430601130",
+  },
+
+  /** [site] links de consulta processual oferecidos no site atual. */
+  consultaProcessual: [
+    { rotulo: "Consulta processual TJPR", href: "https://www.tjpr.jus.br/consulta-processual" },
+    { rotulo: "Consulta processual TJMS", href: "https://esaj.tjms.jus.br/cpopg5/open.do" },
+  ],
+} as const;
+
+/** [cliente] endereços informados. CEP, telefone fixo e horário estão pendentes. */
+export const sedes: Sede[] = [
+  {
+    slug: "toledo-pr",
+    cidade: "Toledo",
+    uf: "PR",
+    logradouro: "Rua General Estilac Leal",
+    numero: "1.467",
+    bairro: "Centro",
+    cep: null,
+    telefone: null,
+    horario: null,
+  },
+  {
+    slug: "iguatemi-ms",
+    cidade: "Iguatemi",
+    uf: "MS",
+    logradouro: "Rua Francisco Martins Rodrigues",
+    numero: "653",
+    bairro: "Centro",
+    cep: null,
+    telefone: null,
+    horario: null,
+  },
+];
+
+/** Ordem conforme enviada pelo cliente. Fotos: sessão oficial publicada em ledesma.adv.br. */
+export const equipe: Integrante[] = [
+  {
+    slug: "amanda",
+    tratamento: "Dra.",
+    nomeCurto: "Dra. Amanda",
+    nomeCompleto: "Amanda Gabrielly Frutos da Silva",
+    profissao: "Advogada",
+    oab: [{ uf: "MS", numero: "31.010" }],
+    area: "direito-previdenciario",
+    telefone: "5567993125666",
+    telefoneExibicao: "(67) 9 9312-5666",
+    whatsapp: true,
+    foto: { src: "/equipe/amanda.webp", alt: "Retrato da Dra. Amanda Gabrielly Frutos da Silva" },
+    minibio: null,
+    formacao: null,
+    titulos: null,
+  },
+  {
+    slug: "gustavo",
+    tratamento: "Dr.",
+    nomeCurto: "Dr. Gustavo",
+    nomeCompleto: "Gustavo Turatto Ledesma",
+    profissao: "Advogado",
+    oab: [{ uf: "MS", numero: "31.011" }],
+    area: "direito-trabalhista",
+    telefone: "5567999213677",
+    telefoneExibicao: "(67) 9 9921-3677",
+    whatsapp: true,
+    foto: { src: "/equipe/gustavo.webp", alt: "Retrato do Dr. Gustavo Turatto Ledesma" },
+    minibio: null,
+    formacao: null,
+    titulos: null,
+  },
+  {
+    slug: "erminio",
+    tratamento: "Dr.",
+    nomeCurto: "Dr. Erminio",
+    nomeCompleto: "Erminio Rodrigo Gomes Ledesma",
+    profissao: "Advogado",
+    oab: [
+      { uf: "MS", numero: "14.249" },
+      { uf: "PR", numero: "98.646" },
+    ],
+    area: "direito-criminal-e-penal",
+    telefone: "5567996381323",
+    telefoneExibicao: "(67) 9 9638-1323",
+    whatsapp: true,
+    foto: { src: "/equipe/erminio.webp", alt: "Retrato do Dr. Erminio Rodrigo Gomes Ledesma" },
+    minibio: null,
+    formacao: null,
+    titulos: null,
+  },
+];
+
+/** Foto oficial da equipe reunida. */
+export const fotoEquipe = {
+  src: "/equipe/equipe.webp",
+  alt: "Dr. Gustavo Turatto Ledesma, Dr. Erminio Rodrigo Gomes Ledesma e Dra. Amanda Gabrielly Frutos da Silva",
+  width: 1800,
+  height: 1282,
+};
+
+export const formatarOAB = (oab: RegistroOAB[]) => oab.map((r) => `OAB/${r.uf} ${r.numero}`).join(" · ");
+
+export const nomeComTratamento = (p: Integrante) => `${p.tratamento} ${p.nomeCompleto}`;
+
+export const enderecoLinha = (s: Sede) => `${s.logradouro}, ${s.numero} – ${s.bairro}, ${s.cidade} – ${s.uf}`;
+
+export const linkMapa = (s: Sede) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${s.logradouro}, ${s.numero.replace(".", "")}, ${s.bairro}, ${s.cidade} - ${s.uf}`,
+  )}`;
+
+export const linkWhatsApp = (p: Integrante, mensagem?: string) =>
+  p.whatsapp
+    ? `https://wa.me/${p.telefone}${mensagem ? `?text=${encodeURIComponent(mensagem)}` : ""}`
+    : null;
+
+export const linkTelefone = (p: Integrante) => `tel:+${p.telefone}`;
+
+export const responsavelPorArea = (area: AreaSlug) => equipe.find((p) => p.area === area);
+
+export const mensagemPadrao = (p: Integrante, areaNome: string) =>
+  `Olá, ${p.nomeCurto}. Gostaria de solicitar um atendimento sobre ${areaNome}.`;
+
+/** Lista as pendências para a revisão antes da publicação. */
+export function listarPendencias(): string[] {
+  const p: string[] = [];
+  if (!envUrl) p.push("Domínio definitivo (variável NEXT_PUBLIC_SITE_URL)");
+  if (!site.verificacaoGoogle) p.push("Código de verificação do Google Search Console (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION)");
+  if (!site.cnpj) p.push("CNPJ da sociedade");
+  if (!site.registroSociedadeOAB) p.push("Número de registro da sociedade na OAB");
+  if (!site.email) p.push("E-mail institucional");
+  if (site.anosDeAtuacao === null) p.push("Tempo de atuação do escritório (o site atual traz 10 e 15 anos)");
+  if (site.publicoTrabalhista === null) p.push("Público da área trabalhista: trabalhadores, empresas ou ambos");
+  for (const s of sedes) {
+    if (!s.cep) p.push(`CEP da sede de ${s.cidade}/${s.uf}`);
+    if (!s.telefone) p.push(`Telefone fixo da sede de ${s.cidade}/${s.uf} (se houver)`);
+    if (!s.horario) p.push(`Horário de atendimento da sede de ${s.cidade}/${s.uf}`);
+  }
+  for (const m of equipe) {
+    p.push(`${m.nomeCurto}: confirmar grafia do nome completo "${m.nomeCompleto}" e situação regular no CNA/OAB`);
+    if (!m.minibio) p.push(`${m.nomeCurto}: minibiografia`);
+    if (!m.formacao) p.push(`${m.nomeCurto}: formação acadêmica`);
+  }
+  return p;
+}

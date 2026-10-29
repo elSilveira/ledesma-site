@@ -1,0 +1,65 @@
+name: Deploy no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # GitHub Pages só serve arquivos estáticos: o site é refeito periodicamente para atualizar as notícias
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      # Recursos que exigem servidor Node e não existem no export estático:
+      # proxy (404 de slugs desconhecidos, que no Pages já vêm do 404.html) e robots/sitemap
+      # (a prévia não é indexada, e robots.txt em subcaminho é ignorado pelos buscadores).
+      - name: Remover rotas que dependem de servidor
+        run: rm src/proxy.ts src/app/robots.ts src/app/sitemap.ts
+
+      - name: Build estático
+        run: npx next build
+        env:
+          GITHUB_PAGES: "true"
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          # Prévia: mantém noindex até o domínio definitivo e os dados pendentes estarem prontos
+          NEXT_PUBLIC_ALLOW_INDEXING: "false"
+
+      - run: node scripts/pages-segmentos.mjs out
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
