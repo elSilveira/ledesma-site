@@ -1,13 +1,12 @@
 import { type FonteNoticias, fontesNoticias, noticiasHref, tiposFonte } from "@/config/noticias";
 import { getNoticias } from "@/lib/noticias";
-import { formatarDataNoticia } from "@/lib/noticias-shared";
 import { Icon } from "./icons";
 import { NewsExplorer } from "./NewsExplorer";
 import { PageHero } from "./PageHero";
 
 /** Corpo comum de /noticias e /noticias/<categoria>. */
 export async function NoticiasView({ fonte }: { fonte?: FonteNoticias }) {
-  const { itens, fontes, atualizadoEm } = await getNoticias();
+  const { itens, fontes } = await getNoticias();
   const lista = fonte ? itens.filter((n) => n.fonte === fonte.id) : itens;
   const status = (id: string) => fontes.find((f) => f.fonte === id);
   const indisponiveis = fontesNoticias.filter((f) => !status(f.id)?.ok);
@@ -32,9 +31,6 @@ export async function NoticiasView({ fonte }: { fonte?: FonteNoticias }) {
       <section aria-label="Lista de notícias" className="bg-ink py-16 md:py-20">
         <div className="container-site">
           <div className="min-w-0">
-            <p className="mb-6 text-xs text-muted">
-              Atualizado em <time dateTime={atualizadoEm}>{formatarDataNoticia(atualizadoEm)}</time>. As fontes são consultadas a cada 30 minutos.
-            </p>
             {fonte && !status(fonte.id)?.ok ? (
               <div className="card p-10">
                 <Icon name="alerta" className="size-7 text-gold" />
