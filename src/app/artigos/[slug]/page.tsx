@@ -109,7 +109,11 @@ export default async function ArtigoPage({ params }: PageProps<"/artigos/[slug]"
             <footer className="!mt-10 text-sm text-muted">
               {revisor ? (
                 <p>
-                  Revisado por {nomeComTratamento(revisor)} ({formatarOAB(revisor.oab)}).
+                  Assinado por{" "}
+                  <Link href={advogadoHref(revisor.slug)} className="text-paper underline decoration-gold/40 underline-offset-4 hover:text-gold">
+                    {nomeComTratamento(revisor)}
+                  </Link>{" "}
+                  ({formatarOAB(revisor.oab)}).
                 </p>
               ) : (
                 <>
