@@ -43,7 +43,7 @@ export const artigos: Artigo[] = [
     area: "direito-criminal-e-penal",
     publicadoEm: "2026-10-28",
     atualizadoEm: "2026-10-28",
-    revisadoPor: null,
+    revisadoPor: "erminio",
     palavrasChave: ["audiência de custódia", "prisão em flagrante", "liberdade provisória", "advogado criminalista Toledo"],
     secoes: [
       {
@@ -116,7 +116,7 @@ export const artigos: Artigo[] = [
     area: "direito-criminal-e-penal",
     publicadoEm: "2026-10-28",
     atualizadoEm: "2026-10-28",
-    revisadoPor: null,
+    revisadoPor: "erminio",
     palavrasChave: ["prisão em flagrante", "direitos do preso", "direito ao silêncio", "advogado criminal Toledo PR"],
     secoes: [
       {
@@ -170,7 +170,7 @@ export const artigos: Artigo[] = [
     area: "direito-trabalhista",
     publicadoEm: "2026-10-28",
     atualizadoEm: "2026-10-28",
-    revisadoPor: null,
+    revisadoPor: "gustavo",
     palavrasChave: ["horas extras", "CLT", "banco de horas", "advogado trabalhista Toledo"],
     secoes: [
       {
@@ -239,7 +239,7 @@ export const artigos: Artigo[] = [
     area: "direito-trabalhista",
     publicadoEm: "2026-10-29",
     atualizadoEm: "2026-10-29",
-    revisadoPor: null,
+    revisadoPor: "gustavo",
     palavrasChave: ["verbas rescisórias", "dispensa sem justa causa", "aviso prévio", "multa do FGTS", "advogado trabalhista Toledo"],
     secoes: [
       {
@@ -321,7 +321,7 @@ export const artigos: Artigo[] = [
     area: "direito-previdenciario",
     publicadoEm: "2026-10-28",
     atualizadoEm: "2026-10-28",
-    revisadoPor: null,
+    revisadoPor: "amanda",
     palavrasChave: ["BPC", "LOAS", "benefício assistencial", "INSS", "advogada previdenciária Toledo"],
     secoes: [
       {
@@ -396,7 +396,7 @@ export const artigos: Artigo[] = [
     area: "direito-previdenciario",
     publicadoEm: "2026-10-29",
     atualizadoEm: "2026-10-29",
-    revisadoPor: null,
+    revisadoPor: "amanda",
     palavrasChave: ["aposentadoria rural", "segurado especial", "trabalhador rural", "INSS", "advogada previdenciária Toledo"],
     secoes: [
       {

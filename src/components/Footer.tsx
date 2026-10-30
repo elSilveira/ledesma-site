@@ -88,6 +88,7 @@ export function Footer() {
                     aria-label={`${enderecoLinha(s)} – abrir no Google Maps (nova aba)`}
                   >
                     {s.logradouro}, {s.numero} – {s.bairro}
+                    {s.cep && ` · CEP ${s.cep}`}
                   </a>
                   {!s.cep && <Pending label="CEP" className="ml-2" />}
                 </li>
@@ -152,7 +153,7 @@ export function Footer() {
             <p>
               © {site.razaoSocial} · Todos os direitos reservados
               {site.cnpj ? ` · CNPJ ${site.cnpj}` : <Pending label="CNPJ" className="ml-2" />}
-              {site.registroSociedadeOAB ? ` · Registro OAB ${site.registroSociedadeOAB}` : <Pending label="registro da sociedade na OAB" className="ml-2" />}
+              {site.registroSociedadeOAB ? ` · Registro ${site.registroSociedadeOAB}` : <Pending label="registro da sociedade na OAB" className="ml-2" />}
             </p>
             <p className="mt-0.5">Conteúdo de caráter exclusivamente informativo, conforme o Código de Ética e Disciplina da OAB.</p>
           </div>

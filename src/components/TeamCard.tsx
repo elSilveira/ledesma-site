@@ -43,11 +43,17 @@ export function TeamCard({ pessoa, index, detalhado = false }: { pessoa: Integra
           <div className="mt-5 space-y-3 text-sm">
             {pessoa.minibio ? <p>{pessoa.minibio}</p> : <Pending label="minibiografia" />}
             {pessoa.formacao ? (
-              <ul className="space-y-1">
-                {pessoa.formacao.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
+              <div>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-gold">Formação</p>
+                <ul className="mt-2 space-y-1">
+                  {pessoa.formacao.map((f) => (
+                    <li key={f} className="flex gap-2">
+                      <span aria-hidden="true" className="text-gold">·</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : (
               <div>
                 <Pending label="formação acadêmica" />

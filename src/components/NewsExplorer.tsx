@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import type { AreaSlug } from "@/config/site";
 import { areas } from "@/content/areas";
 import type { Noticia, Tribunal } from "@/lib/noticias-shared";
@@ -22,9 +22,31 @@ const ROTULOS_TRIBUNAL: Record<Tribunal, string> = {
   TRE: "TREs (Justiça Eleitoral)",
 };
 
-/** Lista de notícias com filtros por área do escritório, tribunal de referência e região. */
+type FiltroArea = AreaSlug | "todas" | "outras";
+
+// A URL só muda por escolha do próprio usuário nesta tela, então não há o que observar
+const semInscricao = () => () => {};
+
+const ehFiltroArea = (v: string | null): v is FiltroArea => v === "outras" || areas.some((a) => a.slug === v);
+
+/**
+ * Lista de notícias com filtros por área do escritório, tribunal de referência e região.
+ * A área pode vir na URL (`/noticias?area=direito-trabalhista`), como nos links das páginas de área.
+ */
 export function NewsExplorer({ itens }: { itens: Noticia[] }) {
-  const [area, setArea] = useState<AreaSlug | "todas" | "outras">("todas");
+  // A página é estática: a área da URL só é lida no navegador (no servidor, "todas")
+  const busca = useSyncExternalStore(semInscricao, () => window.location.search, () => "");
+  const daUrl = new URLSearchParams(busca).get("area");
+  const [escolhida, setEscolhida] = useState<FiltroArea | null>(null);
+  const area: FiltroArea = escolhida ?? (ehFiltroArea(daUrl) ? daUrl : "todas");
+
+  const escolherArea = (a: FiltroArea) => {
+    setEscolhida(a);
+    const url = new URL(window.location.href);
+    if (a === "todas") url.searchParams.delete("area");
+    else url.searchParams.set("area", a);
+    window.history.replaceState(window.history.state, "", url);
+  };
   const [tribunal, setTribunal] = useState<Tribunal | "todos">("todos");
   const [regional, setRegional] = useState(false);
   const [limite, setLimite] = useState(POR_PAGINA);
@@ -62,15 +84,15 @@ export function NewsExplorer({ itens }: { itens: Noticia[] }) {
         <fieldset>
           <legend className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-gold">Área do escritório</legend>
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" aria-pressed={area === "todas"} onClick={() => mudar(() => setArea("todas"))} className={chip(area === "todas")}>
+            <button type="button" aria-pressed={area === "todas"} onClick={() => mudar(() => escolherArea("todas"))} className={chip(area === "todas")}>
               Todas <span className="text-muted">{itens.length}</span>
             </button>
             {areas.map((a) => (
-              <button key={a.slug} type="button" aria-pressed={area === a.slug} onClick={() => mudar(() => setArea(a.slug))} className={chip(area === a.slug)}>
+              <button key={a.slug} type="button" aria-pressed={area === a.slug} onClick={() => mudar(() => escolherArea(a.slug))} className={chip(area === a.slug)}>
                 <Icon name={a.icone} className="size-4 text-gold" /> {a.nomeCurto} <span className="text-muted">{contagemArea(a.slug)}</span>
               </button>
             ))}
-            <button type="button" aria-pressed={area === "outras"} onClick={() => mudar(() => setArea("outras"))} className={chip(area === "outras")}>
+            <button type="button" aria-pressed={area === "outras"} onClick={() => mudar(() => escolherArea("outras"))} className={chip(area === "outras")}>
               Outros temas <span className="text-muted">{itens.filter((n) => n.areas.length === 0).length}</span>
             </button>
           </div>
@@ -105,7 +127,7 @@ export function NewsExplorer({ itens }: { itens: Noticia[] }) {
           {temFiltro && (
             <button
               type="button"
-              onClick={() => mudar(() => (setArea("todas"), setTribunal("todos"), setRegional(false)))}
+              onClick={() => mudar(() => (escolherArea("todas"), setTribunal("todos"), setRegional(false)))}
               className="text-sm text-gold underline underline-offset-4 hover:text-ivory md:ml-auto md:pb-2.5"
             >
               Limpar filtros

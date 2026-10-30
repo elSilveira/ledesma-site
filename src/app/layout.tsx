@@ -68,6 +68,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <RevealObserver />
+        {site.estatisticasToken && (
+          // Cloudflare Web Analytics: contagem de visitas sem cookies e sem identificar o visitante
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: site.estatisticasToken })}
+          />
+        )}
       </body>
     </html>
   );

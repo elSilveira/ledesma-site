@@ -82,7 +82,7 @@ export default function ContatoPage() {
                       <p className="text-sm text-paper">{enderecoLinha(s)}</p>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {s.horario ? <p className="text-sm text-muted">{s.horario}</p> : <Pending label="horário" />}
-                        {!s.cep && <Pending label="CEP" />}
+                        {s.cep ? <p className="text-sm text-muted">CEP {s.cep}</p> : <Pending label="CEP" />}
                       </div>
                       <a
                         href={linkMapa(s)}

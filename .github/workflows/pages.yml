@@ -47,6 +47,8 @@ jobs:
           NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
           # Prévia: mantém noindex até o domínio definitivo e os dados pendentes estarem prontos
           NEXT_PUBLIC_ALLOW_INDEXING: "false"
+          # Variável do repositório (Settings > Secrets and variables > Actions > Variables)
+          NEXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.CF_ANALYTICS_TOKEN }}
 
       - run: node scripts/pages-segmentos.mjs out
 

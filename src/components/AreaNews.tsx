@@ -23,8 +23,8 @@ export async function AreaNews({ slug }: { slug: AreaSlug }) {
             </h2>
             <p className="mt-4 text-sm text-muted">Publicações do STJ e da imprensa jurídica, com link para a fonte original.</p>
           </div>
-          <ButtonLink href={noticiasHref()} variant="outline" data-reveal>
-            Ver todas as notícias
+          <ButtonLink href={`${noticiasHref()}?area=${slug}`} variant="outline" data-reveal>
+            Mais notícias de {area.nomeCurto.toLowerCase()}
           </ButtonLink>
         </div>
         <ul className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

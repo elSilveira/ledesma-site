@@ -26,7 +26,7 @@ export type Integrante = {
   tratamento: "Dr." | "Dra.";
   /** Nome curto usado em botões e chamadas. */
   nomeCurto: string;
-  /** [site] nome completo, conforme publicado no site atual. Confirmar grafia antes da publicação. */
+  /** [cliente] nome completo confirmado pelo escritório. */
   nomeCompleto: string;
   /** [cliente] confirmada pelo envio dos números de inscrição na OAB. */
   profissao: "Advogado" | "Advogada";
@@ -70,6 +70,8 @@ export const site = {
   /** Só permite indexação quando o domínio definitivo estiver configurado. */
   indexavel: Boolean(envUrl) && process.env.NEXT_PUBLIC_ALLOW_INDEXING !== "false",
   verificacaoGoogle: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || null,
+  /** Token do Cloudflare Web Analytics (estatísticas sem cookies). Sem ele, nenhum script de estatística é carregado. */
+  estatisticasToken: process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN || null,
 
   locale: "pt_BR",
   descricao:
@@ -80,15 +82,18 @@ export const site = {
   /** [site] o site atual informa atendimento a distância ("advocacia digital") para todo o Brasil. */
   atendimentoOnline: true,
 
-  /** Pendentes */
-  cnpj: null as string | null,
-  registroSociedadeOAB: null as string | null,
+  /** [cliente] */
+  cnpj: "27.062.854/0001-59" as string | null,
+  /** [cliente] */
+  registroSociedadeOAB: "OAB/MS 964/2017" as string | null,
+  /** Pendente */
   email: null as string | null,
-  /** Pendente: há divergência no site atual ("mais de 10 anos" e "mais de 15 anos"). Não publicar até confirmar. */
-  anosDeAtuacao: null as number | null,
+  /** [cliente] confirmado: mais de 15 anos. */
+  anosDeAtuacao: 15 as number | null,
   fundacao: null as string | null,
 
-  publicoTrabalhista: null as PublicoTrabalhista,
+  /** [cliente] */
+  publicoTrabalhista: "ambos" as PublicoTrabalhista,
 
   redes: {
     /** [site] */
@@ -104,7 +109,7 @@ export const site = {
   ],
 } as const;
 
-/** [cliente] endereços informados. CEP, telefone fixo e horário estão pendentes. */
+/** [cliente] endereços, CEPs e horários informados. As sedes não têm telefone fixo (confirmado pelo cliente). */
 export const sedes: Sede[] = [
   {
     slug: "toledo-pr",
@@ -113,9 +118,9 @@ export const sedes: Sede[] = [
     logradouro: "Rua General Estilac Leal",
     numero: "1.467",
     bairro: "Centro",
-    cep: null,
+    cep: "85900-092",
     telefone: null,
-    horario: null,
+    horario: "Segunda a sexta, das 8h às 12h e das 13h às 18h",
   },
   {
     slug: "iguatemi-ms",
@@ -124,9 +129,10 @@ export const sedes: Sede[] = [
     logradouro: "Rua Francisco Martins Rodrigues",
     numero: "653",
     bairro: "Centro",
+    // Pendente: o CEP enviado ("79960-30") tem 7 dígitos; aguardando confirmação
     cep: null,
     telefone: null,
-    horario: null,
+    horario: "Segunda a sexta, das 8h às 12h e das 13h às 18h",
   },
 ];
 
@@ -144,8 +150,12 @@ export const equipe: Integrante[] = [
     telefoneExibicao: "(67) 9 9312-5666",
     whatsapp: true,
     foto: { src: "/equipe/amanda.webp", alt: "Retrato da Dra. Amanda Gabrielly Frutos da Silva" },
-    minibio: null,
-    formacao: null,
+    /** [cliente] texto enviado pelo próprio profissional. */
+    minibio:
+      "Sou advogada há 2 anos, com atuação voltada à área previdenciária, área pela qual tenho grande interesse e dedicação. Atualmente estou realizando cursos para me especializar ainda mais em Direito Previdenciário, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
+    formacao: [
+      "Graduação em Direito pela Universidade Paranaense (UNIPAR)",
+    ],
     titulos: null,
   },
   {
@@ -160,8 +170,13 @@ export const equipe: Integrante[] = [
     telefoneExibicao: "(67) 9 9921-3677",
     whatsapp: true,
     foto: { src: "/equipe/gustavo.webp", alt: "Retrato do Dr. Gustavo Turatto Ledesma" },
-    minibio: null,
-    formacao: null,
+    /** [cliente] texto enviado pelo próprio profissional. */
+    minibio:
+      "Sou advogado há 2 anos, com atuação voltada à área trabalhista, área pela qual tenho grande interesse e dedicação. Atualmente curso pós-graduação em Direito do Trabalho e Processo do Trabalho, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
+    formacao: [
+      "Graduação em Direito pela Universidade Paranaense (UNIPAR)",
+      "Pós-graduação em Direito do Trabalho e Processo do Trabalho (em andamento)",
+    ],
     titulos: null,
   },
   {
@@ -179,8 +194,15 @@ export const equipe: Integrante[] = [
     telefoneExibicao: "(67) 9 9638-1323",
     whatsapp: true,
     foto: { src: "/equipe/erminio.webp", alt: "Retrato do Dr. Erminio Rodrigo Gomes Ledesma" },
-    minibio: null,
-    formacao: null,
+    /** [cliente] texto enviado pelo próprio profissional. */
+    minibio:
+      "Sou advogado há 16 anos, com atuação voltada à área criminalista, área pela qual tenho grande interesse e dedicação. Busco sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
+    formacao: [
+      "Graduação em Direito pela Universidade Paranaense (UNIPAR)",
+      "Pós-graduação em Direito Penal e Processo Penal",
+      "Pós-graduação em Tribunal do Júri (em andamento)",
+      "Pós-graduação em Recursos e Penas (em andamento)",
+    ],
     titulos: null,
   },
 ];
@@ -221,18 +243,17 @@ export function listarPendencias(): string[] {
   const p: string[] = [];
   if (!envUrl) p.push("Domínio definitivo (variável NEXT_PUBLIC_SITE_URL)");
   if (!site.verificacaoGoogle) p.push("Código de verificação do Google Search Console (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION)");
+  if (!site.estatisticasToken) p.push("Token do Cloudflare Web Analytics para as estatísticas de visitas (NEXT_PUBLIC_CF_ANALYTICS_TOKEN)");
   if (!site.cnpj) p.push("CNPJ da sociedade");
   if (!site.registroSociedadeOAB) p.push("Número de registro da sociedade na OAB");
   if (!site.email) p.push("E-mail institucional");
-  if (site.anosDeAtuacao === null) p.push("Tempo de atuação do escritório (o site atual traz 10 e 15 anos)");
+  if (site.anosDeAtuacao === null) p.push("Tempo de atuação do escritório ");
   if (site.publicoTrabalhista === null) p.push("Público da área trabalhista: trabalhadores, empresas ou ambos");
   for (const s of sedes) {
     if (!s.cep) p.push(`CEP da sede de ${s.cidade}/${s.uf}`);
-    if (!s.telefone) p.push(`Telefone fixo da sede de ${s.cidade}/${s.uf} (se houver)`);
     if (!s.horario) p.push(`Horário de atendimento da sede de ${s.cidade}/${s.uf}`);
   }
   for (const m of equipe) {
-    p.push(`${m.nomeCurto}: confirmar grafia do nome completo "${m.nomeCompleto}" e situação regular no CNA/OAB`);
     if (!m.minibio) p.push(`${m.nomeCurto}: minibiografia`);
     if (!m.formacao) p.push(`${m.nomeCurto}: formação acadêmica`);
   }

@@ -40,7 +40,13 @@ export default function PrivacidadePage() {
           <p>As informações recebidas são protegidas pelo sigilo profissional, nos termos do Estatuto da Advocacia (Lei nº 8.906/1994) e do Código de Ética e Disciplina da OAB.</p>
 
           <h2>Cookies</h2>
-          <p>Este site não utiliza cookies de publicidade ou de rastreamento. Caso ferramentas de análise sejam adicionadas no futuro, esta política será atualizada.</p>
+          <p>Este site não utiliza cookies de publicidade ou de rastreamento.</p>
+          {site.estatisticasToken && (
+            <p>
+              Para saber quantas pessoas visitam o site e quais páginas são mais acessadas, usamos o Cloudflare Web Analytics, que não utiliza cookies,
+              não armazena dados no seu navegador e não identifica o visitante. As informações são apenas estatísticas agregadas.
+            </p>
+          )}
 
           <h2>Direitos do titular</h2>
           <p>
