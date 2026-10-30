@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 });
 
 // Dr. Erminio ao centro
-const ordem = ["amanda", "erminio", "gustavo"].map((slug) => equipe.find((p) => p.slug === slug)!);
+const ordem = ["gustavo", "erminio", "amanda"].map((slug) => equipe.find((p) => p.slug === slug)!);
 
 export default function EquipePage() {
   return (
