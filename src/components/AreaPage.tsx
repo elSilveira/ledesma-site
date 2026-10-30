@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   type AreaSlug,
+  advogadoHref,
   formatarOAB,
   linkTelefone,
   linkWhatsApp,
@@ -60,7 +61,7 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
               <div className="min-w-0">
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-gold">Responsável pela área</p>
                 <p className="mt-1.5 font-serif text-lg leading-snug text-ivory">
-                  <Link href={`/equipe#${responsavel.slug}`} className="hover:text-gold">
+                  <Link href={advogadoHref(responsavel.slug)} className="hover:text-gold">
                     {nomeComTratamento(responsavel)}
                   </Link>
                 </p>

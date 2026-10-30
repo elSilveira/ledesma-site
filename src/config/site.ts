@@ -232,6 +232,8 @@ export const linkWhatsApp = (p: Integrante, mensagem?: string) =>
 
 export const linkTelefone = (p: Integrante) => `tel:+${p.telefone}`;
 
+export const advogadoHref = (slug: string) => `/equipe/${slug}`;
+
 export const responsavelPorArea = (area: AreaSlug) => equipe.find((p) => p.area === area);
 
 export const mensagemPadrao = (p: Integrante, areaNome: string) =>

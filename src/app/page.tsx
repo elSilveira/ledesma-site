@@ -9,7 +9,7 @@ import { Icon, type IconName } from "@/components/icons";
 import { delay } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TeamCard } from "@/components/TeamCard";
-import { enderecoLinha, equipe, fotoEquipe, linkMapa, sedes } from "@/config/site";
+import { advogadoHref, enderecoLinha, equipe, fotoEquipe, linkMapa, sedes } from "@/config/site";
 import { areas } from "@/content/areas";
 import { artigosOrdenados } from "@/content/articles";
 import { pageMetadata } from "@/lib/seo";
@@ -78,7 +78,7 @@ export default function Home() {
             </div>
             <figcaption className="absolute inset-x-0 bottom-0 grid grid-cols-3 gap-2 px-4 pb-5 text-center md:px-8">
               {ordemNaFoto.map((p) => (
-                <Link key={p.slug} href={`/equipe#${p.slug}`} className="group">
+                <Link key={p.slug} href={advogadoHref(p.slug)} className="group">
                   <span className="block font-serif text-sm text-ivory transition-colors group-hover:text-gold md:text-lg">{p.nomeCurto}</span>
                   <span className="block text-[0.6rem] uppercase tracking-[0.16em] text-gold md:text-[0.65rem]">
                     {areas.find((a) => a.slug === p.area)?.nomeCurto}

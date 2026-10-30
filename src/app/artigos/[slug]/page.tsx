@@ -8,7 +8,7 @@ import { Icon } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/PageHero";
 import { Pending } from "@/components/Pending";
-import { equipe, formatarOAB, linkWhatsApp, mensagemPadrao, nomeComTratamento, responsavelPorArea } from "@/config/site";
+import { advogadoHref, equipe, formatarOAB, linkWhatsApp, mensagemPadrao, nomeComTratamento, responsavelPorArea } from "@/config/site";
 import { areaHref, getArea } from "@/content/areas";
 import { artigoHref, artigos, formatarData, getArtigo, tempoDeLeitura } from "@/content/articles";
 import { articleJsonLd, pageMetadata } from "@/lib/seo";
@@ -138,7 +138,7 @@ export default async function ArtigoPage({ params }: PageProps<"/artigos/[slug]"
                   </div>
                   <div>
                     <p className="font-serif text-lg leading-snug text-ivory">
-                      <Link href={`/equipe#${responsavel.slug}`} className="hover:text-gold">
+                      <Link href={advogadoHref(responsavel.slug)} className="hover:text-gold">
                         {responsavel.nomeCurto}
                       </Link>
                     </p>

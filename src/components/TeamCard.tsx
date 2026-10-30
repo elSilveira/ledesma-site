@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { type Integrante, formatarOAB, linkTelefone, linkWhatsApp, mensagemPadrao, nomeComTratamento } from "@/config/site";
+import { type Integrante, advogadoHref, formatarOAB, linkTelefone, linkWhatsApp, mensagemPadrao, nomeComTratamento } from "@/config/site";
 import { areaHref, getArea } from "@/content/areas";
 import { Icon } from "./icons";
 import { delay } from "./PageHero";
@@ -30,7 +30,11 @@ export function TeamCard({ pessoa, index, detalhado = false }: { pessoa: Integra
       </div>
       <div className="relative -mt-14 flex flex-1 flex-col px-7 pb-8">
         <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-gold">{pessoa.profissao}</p>
-        <h3 className="mt-2 text-[1.55rem]">{nomeComTratamento(pessoa)}</h3>
+        <h3 className="mt-2 text-[1.55rem]">
+          <Link href={advogadoHref(pessoa.slug)} className="transition-colors hover:text-gold">
+            {nomeComTratamento(pessoa)}
+          </Link>
+        </h3>
         <p className="mt-2 text-sm text-muted">{formatarOAB(pessoa.oab)}</p>
         <div className="hairline my-6" />
         <p className="text-sm">
@@ -83,6 +87,9 @@ export function TeamCard({ pessoa, index, detalhado = false }: { pessoa: Integra
           <a href={linkTelefone(pessoa)} className="inline-flex items-center gap-2 text-paper transition-colors hover:text-ivory">
             <Icon name="telefone" className="size-4.5 text-gold" /> {pessoa.telefoneExibicao}
           </a>
+          <Link href={advogadoHref(pessoa.slug)} className="inline-flex items-center gap-2 text-paper transition-colors hover:text-gold">
+            Ver perfil <Icon name="seta" className="size-4 text-gold" />
+          </Link>
         </div>
       </div>
     </article>

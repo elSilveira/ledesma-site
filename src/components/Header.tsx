@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { areas, areaHref } from "@/content/areas";
+import { Suspense, useEffect, useState } from "react";
+import { advogadoHref, equipe } from "@/config/site";
+import { areas, areaHref, getArea } from "@/content/areas";
 import { buttonClasses } from "./Button";
 import { Icon } from "./icons";
 import { Logo } from "./Logo";
@@ -11,8 +12,17 @@ import { Logo } from "./Logo";
 const nav = [
   { href: "/", label: "Início" },
   { href: "/o-escritorio", label: "O Escritório" },
-  { href: "/equipe", label: "Equipe" },
-  { href: "/areas-de-atuacao", label: "Áreas de Atuação", children: areas.map((a) => ({ href: areaHref(a.slug), label: a.nome })) },
+  {
+    href: "/equipe",
+    label: "Equipe",
+    rotulo: "advogados",
+    // Mesma ordem da página Equipe
+    children: ["gustavo", "erminio", "amanda"].map((slug) => {
+      const p = equipe.find((x) => x.slug === slug)!;
+      return { href: advogadoHref(p.slug), label: p.nomeCurto, detalhe: getArea(p.area).nomeCurto };
+    }),
+  },
+  { href: "/areas-de-atuacao", label: "Áreas de Atuação", rotulo: "áreas de atuação", children: areas.map((a) => ({ href: areaHref(a.slug), label: a.nome, detalhe: undefined as string | undefined })) },
   { href: "/artigos", label: "Artigos" },
   { href: "/noticias", label: "Notícias" },
   { href: "/contato", label: "Contato" },
@@ -36,16 +46,16 @@ function HeaderWithPath() {
 
 function HeaderView({ pathname }: { pathname: string | null }) {
   const [open, setOpen] = useState(false);
-  const [areasOpen, setAreasOpen] = useState(false);
+  // Submenu aberto, identificado pelo href do item
+  const [submenu, setSubmenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
   const [lastPath, setLastPath] = useState(pathname);
 
   // Fecha os menus ao navegar
   if (pathname !== lastPath) {
     setLastPath(pathname);
     setOpen(false);
-    setAreasOpen(false);
+    setSubmenu(null);
   }
 
   useEffect(() => {
@@ -59,11 +69,11 @@ function HeaderView({ pathname }: { pathname: string | null }) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
-        setAreasOpen(false);
+        setSubmenu(null);
       }
     };
     const onClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setAreasOpen(false);
+      if (!(e.target as Element).closest("[data-submenu]")) setSubmenu(null);
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("click", onClick);
@@ -96,10 +106,10 @@ function HeaderView({ pathname }: { pathname: string | null }) {
         <Logo />
 
         <nav aria-label="Navegação principal" className="hidden lg:block">
-          <ul className="flex items-center gap-5 xl:gap-7">
+          <ul className="flex items-center gap-4 xl:gap-6">
             {nav.map((item) =>
               item.children ? (
-                <li key={item.href} className="relative" ref={dropdownRef}>
+                <li key={item.href} className="relative" data-submenu>
                   <div className="flex items-center gap-1">
                     <Link
                       href={item.href}
@@ -110,18 +120,18 @@ function HeaderView({ pathname }: { pathname: string | null }) {
                     </Link>
                     <button
                       type="button"
-                      aria-expanded={areasOpen}
-                      aria-controls="submenu-areas"
-                      aria-label="Abrir lista de áreas de atuação"
-                      onClick={() => setAreasOpen((v) => !v)}
+                      aria-expanded={submenu === item.href}
+                      aria-controls={`submenu${item.href.replace("/", "-")}`}
+                      aria-label={`Abrir lista de ${item.rotulo}`}
+                      onClick={() => setSubmenu((v) => (v === item.href ? null : item.href))}
                       className="grid size-7 place-items-center text-paper/80 transition-colors hover:text-gold"
                     >
-                      <Icon name="setaBaixo" className={`size-3.5 transition-transform duration-300 ${areasOpen ? "rotate-180" : ""}`} />
+                      <Icon name="setaBaixo" className={`size-3.5 transition-transform duration-300 ${submenu === item.href ? "rotate-180" : ""}`} />
                     </button>
                   </div>
                   <ul
-                    id="submenu-areas"
-                    hidden={!areasOpen}
+                    id={`submenu${item.href.replace("/", "-")}`}
+                    hidden={submenu !== item.href}
                     className="absolute left-1/2 top-full mt-4 w-72 -translate-x-1/2 border border-gold/20 bg-coal/95 p-2 shadow-2xl shadow-black/60 backdrop-blur-md"
                   >
                     {item.children.map((c) => (
@@ -134,6 +144,7 @@ function HeaderView({ pathname }: { pathname: string | null }) {
                           }`}
                         >
                           {c.label}
+                          {c.detalhe && <span className="mt-0.5 block text-[0.68rem] uppercase tracking-[0.16em] text-muted">{c.detalhe}</span>}
                         </Link>
                       </li>
                     ))}
@@ -155,7 +166,7 @@ function HeaderView({ pathname }: { pathname: string | null }) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/contato" className={`${buttonClasses("primary")} !px-5 !py-3 max-sm:!hidden lg:max-xl:!hidden`}>
+          <Link href="/contato" className={`${buttonClasses("primary")} whitespace-nowrap !px-5 !py-3 max-sm:!hidden lg:max-xl:!hidden`}>
             Fale com o escritório
           </Link>
           <button
@@ -217,6 +228,6 @@ function HeaderView({ pathname }: { pathname: string | null }) {
 }
 
 const navLinkClass = (active: boolean) =>
-  `relative py-2 text-[0.8rem] font-medium tracking-[0.04em] transition-colors duration-300 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:bg-gold after:transition-transform after:duration-500 ${
+  `relative whitespace-nowrap py-2 text-[0.8rem] font-medium tracking-[0.04em] transition-colors duration-300 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:bg-gold after:transition-transform after:duration-500 ${
     active ? "text-gold after:scale-x-100" : "text-paper hover:text-ivory after:scale-x-0 hover:after:scale-x-100"
   }`;

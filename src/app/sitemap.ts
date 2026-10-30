@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { areas, areaHref } from "@/content/areas";
 import { artigoHref, artigos } from "@/content/articles";
 import { fontesNoticias, noticiasHref } from "@/config/noticias";
+import { advogadoHref, equipe } from "@/config/site";
 import { absoluteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/"), changeFrequency: "monthly", priority: 1 },
     { url: absoluteUrl("/o-escritorio"), changeFrequency: "yearly", priority: 0.7 },
     { url: absoluteUrl("/equipe"), changeFrequency: "yearly", priority: 0.7 },
+    ...equipe.map((p) => ({ url: absoluteUrl(advogadoHref(p.slug)), changeFrequency: "monthly" as const, priority: 0.7 })),
     { url: absoluteUrl("/areas-de-atuacao"), changeFrequency: "yearly", priority: 0.8 },
     ...areas.map((a) => ({ url: absoluteUrl(areaHref(a.slug)), changeFrequency: "yearly" as const, priority: 0.9 })),
     { url: absoluteUrl("/artigos"), changeFrequency: "weekly", priority: 0.7 },
