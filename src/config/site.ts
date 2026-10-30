@@ -129,8 +129,7 @@ export const sedes: Sede[] = [
     logradouro: "Rua Francisco Martins Rodrigues",
     numero: "653",
     bairro: "Centro",
-    // Pendente: o CEP enviado ("79960-30") tem 7 dígitos; aguardando confirmação
-    cep: null,
+    cep: "79960-000",
     telefone: null,
     horario: "Segunda a sexta, das 8h às 12h e das 13h às 18h",
   },
