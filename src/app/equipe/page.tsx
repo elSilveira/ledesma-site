@@ -11,6 +11,9 @@ export const metadata = pageMetadata({
   path: "/equipe",
 });
 
+// Dr. Erminio ao centro
+const ordem = ["amanda", "erminio", "gustavo"].map((slug) => equipe.find((p) => p.slug === slug)!);
+
 export default function EquipePage() {
   return (
     <>
@@ -20,7 +23,7 @@ export default function EquipePage() {
 
       <section aria-label="Perfis profissionais" className="bg-ink py-24">
         <div className="container-site grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {equipe.map((p, i) => (
+          {ordem.map((p, i) => (
             <TeamCard key={p.slug} pessoa={p} index={i} detalhado />
           ))}
         </div>
