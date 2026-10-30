@@ -210,8 +210,8 @@ export const equipe: Integrante[] = [
 export const fotoEquipe = {
   src: "/equipe/equipe.webp",
   alt: "Dr. Gustavo Turatto Ledesma, Dr. Erminio Rodrigo Gomes Ledesma e Dra. Amanda Gabrielly Frutos da Silva",
-  width: 1800,
-  height: 1282,
+  width: 925,
+  height: 658,
 };
 
 export const formatarOAB = (oab: RegistroOAB[]) => oab.map((r) => `OAB/${r.uf} ${r.numero}`).join(" · ");
