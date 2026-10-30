@@ -70,5 +70,5 @@ O build com servidor (`npm run build && npm start`) continua sendo o recomendado
 
 ## Formulário de contato
 
-Ainda não há e-mail nem servidor de envio. O formulário valida os dados e abre o WhatsApp do advogado da área escolhida
+O escritório não tem e-mail institucional, e não há servidor de envio. O formulário valida os dados e abre o WhatsApp do advogado da área escolhida
 com a mensagem pronta; nada é armazenado pelo site. Para enviar por e-mail, será preciso integrar um serviço de envio.

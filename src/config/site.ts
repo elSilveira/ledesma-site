@@ -86,7 +86,7 @@ export const site = {
   cnpj: "27.062.854/0001-59" as string | null,
   /** [cliente] */
   registroSociedadeOAB: "OAB/MS 964/2017" as string | null,
-  /** Pendente */
+  /** [cliente] o escritório não tem e-mail institucional. Se passar a ter, basta preenchê-lo aqui. */
   email: null as string | null,
   /** [cliente] confirmado: mais de 15 anos. */
   anosDeAtuacao: 15 as number | null,
@@ -245,7 +245,6 @@ export function listarPendencias(): string[] {
   if (!site.estatisticasToken) p.push("Token do Cloudflare Web Analytics para as estatísticas de visitas (NEXT_PUBLIC_CF_ANALYTICS_TOKEN)");
   if (!site.cnpj) p.push("CNPJ da sociedade");
   if (!site.registroSociedadeOAB) p.push("Número de registro da sociedade na OAB");
-  if (!site.email) p.push("E-mail institucional");
   if (site.anosDeAtuacao === null) p.push("Tempo de atuação do escritório ");
   if (site.publicoTrabalhista === null) p.push("Público da área trabalhista: trabalhadores, empresas ou ambos");
   for (const s of sedes) {

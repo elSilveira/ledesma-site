@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Pending } from "@/components/Pending";
 import { site } from "@/config/site";
@@ -24,7 +25,10 @@ export default function PrivacidadePage() {
             {site.cnpj ? `, CNPJ ${site.cnpj}` : ""}.
           </p>
           {!site.cnpj && <Pending label="CNPJ do controlador" />}
-          {site.email ? <p>Contato para assuntos de privacidade: {site.email}.</p> : <Pending label="e-mail para solicitações de titulares" />}
+          <p>
+            Contato para assuntos de privacidade: {site.email ? `${site.email}, ` : ""}pelo WhatsApp dos advogados ou presencialmente nas sedes, conforme
+            indicado na <Link href="/contato">página de contato</Link>.
+          </p>
 
           <h2>Quais dados são tratados</h2>
           <p>

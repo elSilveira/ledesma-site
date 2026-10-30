@@ -102,15 +102,13 @@ export default function ContatoPage() {
             <div>
               <h2 className="text-2xl md:text-3xl">Outros canais</h2>
               <ul className="mt-6 space-y-3 text-sm">
-                <li>
-                  {site.email ? (
+                {site.email && (
+                  <li>
                     <a href={`mailto:${site.email}`} className="inline-flex items-center gap-2 text-paper hover:text-gold">
                       <Icon name="email" className="size-5 text-gold" /> {site.email}
                     </a>
-                  ) : (
-                    <Pending label="e-mail institucional" />
-                  )}
-                </li>
+                  </li>
+                )}
                 <li>
                   <a href={site.redes.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-paper hover:text-gold">
                     <Icon name="instagram" className="size-5 text-gold" /> @ledesma.advocacia

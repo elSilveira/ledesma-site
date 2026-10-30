@@ -94,12 +94,10 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            {site.email ? (
+            {site.email && (
               <a href={`mailto:${site.email}`} className="mt-3 inline-flex items-center gap-2 text-sm text-paper hover:text-gold">
                 <Icon name="email" className="size-4 text-gold" /> {site.email}
               </a>
-            ) : (
-              <Pending label="e-mail institucional" className="mt-3" />
             )}
           </div>
 
