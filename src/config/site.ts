@@ -151,6 +151,7 @@ export const equipe: Integrante[] = [
     telefoneExibicao: "(67) 9 9921-3677",
     whatsapp: true,
     foto: { src: "/equipe/gustavo.webp", alt: "Retrato do Dr. Gustavo Turatto Ledesma" },
+    fotoPerfil: { src: "/equipe/gustavo-perfil.webp", alt: "Dr. Gustavo Turatto Ledesma, sentado à mesa no escritório" },
     /** [cliente] texto enviado pelo próprio profissional. */
     minibio:
       "Sou advogado há 2 anos, com atuação voltada à área trabalhista, área pela qual tenho grande interesse e dedicação. Atualmente curso pós-graduação em Direito do Trabalho e Processo do Trabalho, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
