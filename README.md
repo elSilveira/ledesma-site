@@ -38,9 +38,10 @@ Campos `null` em `site.ts` são **pendentes**: não aparecem no site publicado. 
 
 ## Imagens
 
-Logotipo e fotografias foram obtidos do site oficial atual (ledesma.adv.br). O logotipo foi recolorido para fundo escuro
-(louros e balança em marfim, "L" em bordô, "ADVOCACIA" em dourado). Para trocar uma foto, substitua o arquivo em
-`public/equipe/` mantendo o nome, ou altere `foto.src` em `site.ts`.
+Logotipo e fotografias foram enviados pelo escritório. Em `public/brand/` estão o emblema, o nome e a logo completa, com
+fundo transparente; os ícones (`src/app/icon.png`, `apple-icon.png`) e a imagem de compartilhamento (`public/og/`) foram
+montados a partir deles. Os retratos em `public/equipe/` são recortes da foto de grupo (`equipe.webp`). Para trocar uma foto,
+substitua o arquivo mantendo o nome, ou altere `foto.src` em `site.ts`.
 
 ## Notícias
 

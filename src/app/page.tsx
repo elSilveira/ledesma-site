@@ -144,7 +144,7 @@ export default function Home() {
           src="/brand/emblema.png"
           alt=""
           width={420}
-          height={419}
+          height={418}
           aria-hidden="true"
           className="pointer-events-none absolute -right-24 top-1/2 hidden w-[34rem] -translate-y-1/2 opacity-[0.035] lg:block"
         />
