@@ -39,6 +39,8 @@ export type Integrante = {
   /** O número tem WhatsApp? [site] os três números constam como WhatsApp no site atual. */
   whatsapp: boolean;
   foto: { src: string; alt: string };
+  /** Foto individual para a página de perfil; sem ela, o perfil usa `foto` (recorte da foto de grupo). */
+  fotoPerfil?: { src: string; alt: string };
   /** Pendentes: preencher somente com informações verificadas. */
   minibio: string | null;
   formacao: string[] | null;
@@ -196,6 +198,7 @@ export const equipe: Integrante[] = [
     telefoneExibicao: "(67) 9 9312-5666",
     whatsapp: true,
     foto: { src: "/equipe/amanda.webp", alt: "Retrato da Dra. Amanda Gabrielly Frutos da Silva" },
+    fotoPerfil: { src: "/equipe/amanda-perfil.webp", alt: "Dra. Amanda Gabrielly Frutos da Silva, sentada, sorrindo, em estúdio" },
     /** [cliente] texto enviado pelo próprio profissional. */
     minibio:
       "Sou advogada há 2 anos, com atuação voltada à área previdenciária, área pela qual tenho grande interesse e dedicação. Atualmente estou realizando cursos para me especializar ainda mais em Direito Previdenciário, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",

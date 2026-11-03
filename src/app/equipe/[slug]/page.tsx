@@ -38,6 +38,7 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
   const assinados = artigosOrdenados().filter((a) => a.revisadoPor === pessoa.slug);
   const colegas = equipe.filter((p) => p.slug !== pessoa.slug);
   const wa = linkWhatsApp(pessoa, mensagemPadrao(pessoa, area.nome));
+  const foto = pessoa.fotoPerfil ?? pessoa.foto;
   const crumbs = [
     { name: "Início", path: "/" },
     { name: "Equipe", path: "/equipe" },
@@ -53,7 +54,7 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
           <div className="hero-rise relative mx-auto w-full max-w-sm lg:max-w-none">
             <div aria-hidden="true" className="absolute -bottom-4 -right-4 inset-0 translate-x-4 translate-y-4 border border-gold/30" />
             <div className="relative aspect-[4/5] overflow-hidden bg-slate">
-              <Image src={pessoa.foto.src} alt={pessoa.foto.alt} fill priority sizes="(min-width: 1024px) 460px, 384px" className="object-cover object-top" />
+              <Image src={foto.src} alt={foto.alt} fill priority sizes="(min-width: 1024px) 460px, 384px" className="object-cover object-top" />
             </div>
           </div>
 
