@@ -16,11 +16,7 @@ const nav = [
     href: "/equipe",
     label: "Equipe",
     rotulo: "advogados",
-    // Mesma ordem da página Equipe
-    children: ["gustavo", "erminio", "amanda"].map((slug) => {
-      const p = equipe.find((x) => x.slug === slug)!;
-      return { href: advogadoHref(p.slug), label: p.nomeCurto, detalhe: getArea(p.area).nomeCurto };
-    }),
+    children: equipe.map((p) => ({ href: advogadoHref(p.slug), label: p.nomeCurto, detalhe: getArea(p.area).nomeCurto })),
   },
   { href: "/areas-de-atuacao", label: "Áreas de Atuação", rotulo: "áreas de atuação", children: areas.map((a) => ({ href: areaHref(a.slug), label: a.nome, detalhe: undefined as string | undefined })) },
   { href: "/artigos", label: "Artigos" },

@@ -135,28 +135,8 @@ export const sedes: Sede[] = [
   },
 ];
 
-/** Ordem conforme enviada pelo cliente. Fotos: sessão oficial publicada em ledesma.adv.br. */
+/** Mesma ordem da foto da equipe (da esquerda para a direita), usada em todo o site. Fotos recortadas da foto de grupo enviada pelo escritório. */
 export const equipe: Integrante[] = [
-  {
-    slug: "amanda",
-    tratamento: "Dra.",
-    nomeCurto: "Dra. Amanda",
-    nomeCompleto: "Amanda Gabrielly Frutos da Silva",
-    profissao: "Advogada",
-    oab: [{ uf: "MS", numero: "31.010" }],
-    area: "direito-previdenciario",
-    telefone: "5567993125666",
-    telefoneExibicao: "(67) 9 9312-5666",
-    whatsapp: true,
-    foto: { src: "/equipe/amanda.webp", alt: "Retrato da Dra. Amanda Gabrielly Frutos da Silva" },
-    /** [cliente] texto enviado pelo próprio profissional. */
-    minibio:
-      "Sou advogada há 2 anos, com atuação voltada à área previdenciária, área pela qual tenho grande interesse e dedicação. Atualmente estou realizando cursos para me especializar ainda mais em Direito Previdenciário, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
-    formacao: [
-      "Graduação em Direito pela Universidade Paranaense (UNIPAR)",
-    ],
-    titulos: null,
-  },
   {
     slug: "gustavo",
     tratamento: "Dr.",
@@ -201,6 +181,26 @@ export const equipe: Integrante[] = [
       "Pós-graduação em Direito Penal e Processo Penal",
       "Pós-graduação em Tribunal do Júri (em andamento)",
       "Pós-graduação em Recursos e Penas (em andamento)",
+    ],
+    titulos: null,
+  },
+  {
+    slug: "amanda",
+    tratamento: "Dra.",
+    nomeCurto: "Dra. Amanda",
+    nomeCompleto: "Amanda Gabrielly Frutos da Silva",
+    profissao: "Advogada",
+    oab: [{ uf: "MS", numero: "31.010" }],
+    area: "direito-previdenciario",
+    telefone: "5567993125666",
+    telefoneExibicao: "(67) 9 9312-5666",
+    whatsapp: true,
+    foto: { src: "/equipe/amanda.webp", alt: "Retrato da Dra. Amanda Gabrielly Frutos da Silva" },
+    /** [cliente] texto enviado pelo próprio profissional. */
+    minibio:
+      "Sou advogada há 2 anos, com atuação voltada à área previdenciária, área pela qual tenho grande interesse e dedicação. Atualmente estou realizando cursos para me especializar ainda mais em Direito Previdenciário, buscando sempre ampliar meus conhecimentos e evoluir profissionalmente, com o compromisso de oferecer um atendimento próximo, responsável e dedicado a cada cliente.",
+    formacao: [
+      "Graduação em Direito pela Universidade Paranaense (UNIPAR)",
     ],
     titulos: null,
   },

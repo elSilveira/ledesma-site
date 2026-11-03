@@ -33,9 +33,6 @@ const principios: { icone: IconName; titulo: string; texto: string }[] = [
   { icone: "balanca", titulo: "Ética", texto: "Atuação pautada pela ética, pela transparência e pela eficiência." },
 ];
 
-// Ordem das pessoas na fotografia da equipe, da esquerda para a direita
-const ordemNaFoto = ["gustavo", "erminio", "amanda"].map((slug) => equipe.find((p) => p.slug === slug)!);
-
 export default function Home() {
   const recentes = artigosOrdenados().slice(0, 3);
   return (
@@ -77,7 +74,7 @@ export default function Home() {
               <div aria-hidden="true" className="absolute inset-0 shadow-[inset_0_0_120px_rgb(0_0_0/0.55)]" />
             </div>
             <figcaption className="absolute inset-x-0 bottom-0 grid grid-cols-3 gap-2 px-4 pb-5 text-center md:px-8">
-              {ordemNaFoto.map((p) => (
+              {equipe.map((p) => (
                 <Link key={p.slug} href={advogadoHref(p.slug)} className="group">
                   <span className="block font-serif text-sm text-ivory transition-colors group-hover:text-gold md:text-lg">{p.nomeCurto}</span>
                   <span className="block text-[0.6rem] uppercase tracking-[0.16em] text-gold md:text-[0.65rem]">
