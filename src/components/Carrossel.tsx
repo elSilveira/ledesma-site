@@ -10,14 +10,14 @@ const botao =
 
 /**
  * Faixa com rolagem lateral (arrastar no celular) que avança sozinha a cada 6 s, como o slider do site antigo.
- * Para com o mouse ou o foco do teclado sobre ela, pelo botão de pausa e quando o sistema pede menos movimento.
+ * Para com o mouse ou o foco do teclado sobre ela e quando o sistema pede menos movimento.
  */
 export function Carrossel({ children, rotulo }: { children: ReactNode; rotulo: string }) {
   const trilho = useRef<HTMLUListElement>(null);
   const itens = Children.toArray(children);
   const [atual, setAtual] = useState(0);
   const [paginas, setPaginas] = useState(itens.length);
-  const [pausado, setPausado] = useState(false);
+  const [parado, setParado] = useState(false);
   const [sobre, setSobre] = useState(false);
   const [suave, setSuave] = useState(true);
 
@@ -43,7 +43,7 @@ export function Carrossel({ children, rotulo }: { children: ReactNode; rotulo: s
     };
     const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
     setSuave(!reduzir);
-    setPausado(reduzir);
+    setParado(reduzir);
     medir();
     t.addEventListener("scroll", medir, { passive: true });
     window.addEventListener("resize", medir);
@@ -55,12 +55,12 @@ export function Carrossel({ children, rotulo }: { children: ReactNode; rotulo: s
 
   // Reinicia a contagem a cada mudança, inclusive quando a pessoa arrasta ou clica.
   useEffect(() => {
-    if (pausado || sobre || paginas <= 1) return;
+    if (parado || sobre || paginas <= 1) return;
     const id = setTimeout(() => {
       if (!document.hidden) ir(atual + 1 >= paginas ? 0 : atual + 1);
     }, INTERVALO);
     return () => clearTimeout(id);
-  }, [atual, paginas, pausado, sobre, ir]);
+  }, [atual, paginas, parado, sobre, ir]);
 
   return (
     <div
@@ -109,14 +109,6 @@ export function Carrossel({ children, rotulo }: { children: ReactNode; rotulo: s
           <div className="flex gap-2">
             <button type="button" onClick={() => ir(atual - 1 < 0 ? paginas - 1 : atual - 1)} aria-label="Avaliação anterior" className={botao}>
               <Icon name="seta" className="size-5 rotate-180" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setPausado((p) => !p)}
-              aria-label={pausado ? "Retomar rotação automática" : "Pausar rotação automática"}
-              className={botao}
-            >
-              <Icon name={pausado ? "play" : "pausa"} className="size-4.5" />
             </button>
             <button type="button" onClick={() => ir(atual + 1 >= paginas ? 0 : atual + 1)} aria-label="Próxima avaliação" className={botao}>
               <Icon name="seta" className="size-5" />
