@@ -10,7 +10,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Artigos",
   description:
-    "Artigos informativos da Ledesma Advocacia sobre Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário: direitos, prazos e procedimentos.",
+    "Artigos informativos da Ledesma Advocacia sobre Direito Criminal, Direito Trabalhista e Direito Previdenciário: direitos, prazos e procedimentos.",
   path: "/artigos",
 });
 

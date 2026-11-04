@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Notícias Jurídicas",
   description:
-    "Notícias recentes do STJ, do ConJur e do Migalhas, organizadas por fonte e classificadas por área: Direito Criminal e Penal, Trabalhista e Previdenciário.",
+    "Notícias recentes do STJ, do ConJur e do Migalhas, organizadas por fonte e classificadas por área: Direito Criminal, Trabalhista, Previdenciário e Família e Sucessões.",
   path: "/noticias",
 });
 

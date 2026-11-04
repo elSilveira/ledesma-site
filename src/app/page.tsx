@@ -20,7 +20,7 @@ export const metadata = {
   ...pageMetadata({
   title: homeTitle,
   description:
-    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS). Atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial e a distância.",
+    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS). Atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial e a distância.",
   path: "/",
   }),
   title: { absolute: homeTitle },
@@ -48,7 +48,7 @@ export default function Home() {
               Orientação jurídica com ética, técnica e <em className="font-serif italic text-gold">proximidade.</em>
             </h1>
             <p className="hero-rise mt-7 max-w-xl text-lg text-paper" style={delay(240)}>
-              Atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial nas sedes e também a distância.
+              Atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial nas sedes e também a distância.
             </p>
             <div className="hero-rise mt-10 flex flex-wrap gap-4" style={delay(360)}>
               <ButtonLink href="/contato">Fale com o escritório</ButtonLink>

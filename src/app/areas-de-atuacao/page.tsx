@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Áreas de Atuação",
   description:
-    "Áreas de atuação da Ledesma Advocacia em Toledo (PR) e Iguatemi (MS): Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário.",
+    "Áreas de atuação da Ledesma Advocacia em Toledo (PR) e Iguatemi (MS): Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões.",
   path: "/areas-de-atuacao",
 });
 

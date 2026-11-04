@@ -13,7 +13,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "O Escritório",
   description:
-    "Conheça a Ledesma Advocacia S/S: sedes em Toledo (PR) e Iguatemi (MS), atuação em Direito Criminal e Penal, Trabalhista e Previdenciário, e atendimento também a distância.",
+    "Conheça a Ledesma Advocacia S/S: sedes em Toledo (PR) e Iguatemi (MS), atuação em Direito Criminal, Trabalhista, Previdenciário e de Família e Sucessões, e atendimento também a distância.",
   path: "/o-escritorio",
 });
 
@@ -31,7 +31,7 @@ export default function EscritorioPage() {
           <div>
             <SectionHeading id="quem-somos" eyebrow="Quem somos" title="Uma equipe, quatro áreas de atuação">
               <p>
-                A {site.razaoSocial} reúne advogados com atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões. Criminal, Trabalhista e
+                A {site.razaoSocial} reúne advogados com atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões. Criminal, Trabalhista e
                 Previdenciário têm, cada uma, um profissional responsável, e os três advogados atuam juntos em Família e Sucessões, o que permite
                 acompanhamento direto e comunicação objetiva com quem procura o escritório.
               </p>

@@ -82,7 +82,7 @@ export const site = {
 
   locale: "pt_BR",
   descricao:
-    "Ledesma Advocacia: escritório com sedes em Toledo (PR) e Iguatemi (MS), com atuação em Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário.",
+    "Ledesma Advocacia: escritório com sedes em Toledo (PR) e Iguatemi (MS), com atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões.",
 
   /** [site] valores declarados no site atual. */
   valores: ["Ética", "Transparência", "Eficiência"],

@@ -35,12 +35,12 @@ export type Area = {
 export const areas: Area[] = [
   {
     slug: "direito-criminal-e-penal",
-    nome: "Direito Criminal e Penal",
-    nomeCurto: "Criminal e Penal",
+    nome: "Direito Criminal",
+    nomeCurto: "Criminal",
     icone: "balanca",
-    seoTitulo: "Direito Criminal e Penal em Toledo – PR",
+    seoTitulo: "Direito Criminal em Toledo – PR",
     seoDescricao:
-      "Atuação em Direito Criminal e Penal em Toledo (PR) e Iguatemi (MS): inquérito policial, prisão em flagrante, audiência de custódia, ação penal, recursos, habeas corpus e execução penal.",
+      "Atuação em Direito Criminal em Toledo (PR) e Iguatemi (MS): inquérito policial, prisão em flagrante, audiência de custódia, ação penal, recursos, habeas corpus e execução penal.",
     resumo: "Acompanhamento técnico em todas as fases da persecução penal, da investigação à execução da pena.",
     introducao: [
       "O Direito Criminal abrange a atuação jurídica relacionada à investigação e à apuração de crimes, bem como à defesa dos direitos e garantias individuais. O Direito Processual Penal estabelece os procedimentos que orientam o processo, desde a investigação e a acusação até a defesa, o julgamento e os recursos.",

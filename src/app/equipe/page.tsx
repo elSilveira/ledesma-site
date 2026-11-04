@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Nossa Equipe",
   description:
-    "Conheça os advogados da Ledesma Advocacia: Dra. Amanda (Direito Previdenciário), Dr. Gustavo (Direito Trabalhista) e Dr. Erminio (Direito Criminal e Penal).",
+    "Conheça os advogados da Ledesma Advocacia: Dra. Amanda (Direito Previdenciário), Dr. Gustavo (Direito Trabalhista) e Dr. Erminio (Direito Criminal). Os três atuam em Direito de Família e Sucessões.",
   path: "/equipe",
 });
 
