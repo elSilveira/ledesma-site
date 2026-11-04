@@ -70,7 +70,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Sedes e consulta processual */}
+        {/* Sedes e redes sociais */}
         <div className="grid gap-8 border-t border-white/10 py-7 md:grid-cols-2 md:gap-12">
           <div>
             <h2 className={titulo}>Nossas sedes</h2>
@@ -102,23 +102,8 @@ export function Footer() {
           </div>
 
           <div>
-            <h2 className={titulo}>Consulta processual</h2>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {site.consultaProcessual.map((c) => (
-                <li key={c.href}>
-                  <a
-                    href={c.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${c.rotulo} (abre em nova aba)`}
-                    className="inline-flex items-center gap-2 border border-white/15 bg-ink/60 px-4 py-2 text-ivory transition-colors hover:border-gold hover:text-gold"
-                  >
-                    {c.rotulo.replace(/^Consulta processual\s*/i, "")} <Icon name="externo" className="size-3.5" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <ul className="mt-4 flex gap-2">
+            <h2 className={titulo}>Redes sociais</h2>
+            <ul className="mt-3 flex gap-2">
               <li>
                 <a
                   href={site.redes.instagram}

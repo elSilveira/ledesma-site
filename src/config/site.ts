@@ -108,12 +108,6 @@ export const site = {
     /** [site] */
     facebook: "https://www.facebook.com/profile.php?id=100080430601130",
   },
-
-  /** [site] links de consulta processual oferecidos no site atual. */
-  consultaProcessual: [
-    { rotulo: "Consulta processual TJPR", href: "https://www.tjpr.jus.br/consulta-processual" },
-    { rotulo: "Consulta processual TJMS", href: "https://esaj.tjms.jus.br/cpopg5/open.do" },
-  ],
 } as const;
 
 /** [cliente] endereços, CEPs e horários informados. As sedes não têm telefone fixo (confirmado pelo cliente). */
