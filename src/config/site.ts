@@ -58,6 +58,8 @@ export type Sede = {
   cep: string | null;
   telefone: string | null;
   horario: string | null;
+  /** Perfil da sede no Google Maps; sem ele, o link faz uma busca pelo endereço. */
+  mapa?: string;
 };
 
 const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
@@ -128,12 +130,14 @@ export const sedes: Sede[] = [
     slug: "iguatemi-ms",
     cidade: "Iguatemi",
     uf: "MS",
-    logradouro: "Rua Francisco Martins Rodrigues",
-    numero: "653",
+    logradouro: "Av. Jardelino José Moreira",
+    numero: "1738",
     bairro: "Centro",
     cep: "79960-000",
     telefone: null,
     horario: "Segunda a sexta, das 8h às 12h e das 13h às 18h",
+    /** [cliente] Ledesma Advocacia S/S no Google */
+    mapa: "https://www.google.com/maps/place/?q=place_id:ChIJ22n1kCkXi5QRkoUD4x4EoNU",
   },
 ];
 
@@ -225,6 +229,7 @@ export const nomeComTratamento = (p: Integrante) => `${p.tratamento} ${p.nomeCom
 export const enderecoLinha = (s: Sede) => `${s.logradouro}, ${s.numero} – ${s.bairro}, ${s.cidade} – ${s.uf}`;
 
 export const linkMapa = (s: Sede) =>
+  s.mapa ??
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${s.logradouro}, ${s.numero.replace(".", "")}, ${s.bairro}, ${s.cidade} - ${s.uf}`,
   )}`;
