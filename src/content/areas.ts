@@ -43,8 +43,8 @@ export const areas: Area[] = [
       "Atuação em Direito Criminal e Penal em Toledo (PR) e Iguatemi (MS): inquérito policial, prisão em flagrante, audiência de custódia, ação penal, recursos, habeas corpus e execução penal.",
     resumo: "Acompanhamento técnico em todas as fases da persecução penal, da investigação à execução da pena.",
     introducao: [
-      "No uso cotidiano, “Direito Criminal” e “Direito Penal” designam a mesma área. Tecnicamente, o Direito Penal reúne as normas que definem crimes e penas, enquanto o Direito Processual Penal regula o caminho do processo: investigação, acusação, defesa, julgamento e recursos.",
-      "A atuação do escritório nessa área reúne as duas dimensões, com acompanhamento técnico desde a fase de investigação, sempre com sigilo profissional e respeito às garantias previstas na Constituição Federal.",
+      "O Direito Criminal abrange a atuação jurídica relacionada à investigação e à apuração de crimes, bem como à defesa dos direitos e garantias individuais. O Direito Processual Penal estabelece os procedimentos que orientam o processo, desde a investigação e a acusação até a defesa, o julgamento e os recursos.",
+      "A atuação do escritório nessa área compreende o acompanhamento jurídico em todas essas etapas, sempre com sigilo profissional, rigor técnico e respeito às garantias previstas na Constituição Federal.",
     ],
     secoes: [
       {
