@@ -9,7 +9,7 @@ import { Icon } from "@/components/icons";
 import { delay } from "@/components/PageHero";
 import { advogadoHref, equipe, formatarOAB, linkTelefone, linkWhatsApp, mensagemPadrao, nomeComTratamento } from "@/config/site";
 import { areaHref, getArea } from "@/content/areas";
-import { artigosOrdenados } from "@/content/articles";
+import { artigosOrdenados, assinantes } from "@/content/articles";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 
@@ -36,7 +36,7 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
 
   const area = getArea(pessoa.area);
   const areasDaPessoa = [pessoa.area, ...(pessoa.areasAdicionais ?? [])].map(getArea);
-  const assinados = artigosOrdenados().filter((a) => a.revisadoPor === pessoa.slug);
+  const assinados = artigosOrdenados().filter((a) => assinantes(a).includes(pessoa.slug));
   const colegas = equipe.filter((p) => p.slug !== pessoa.slug);
   const wa = linkWhatsApp(pessoa, mensagemPadrao(pessoa, area.nome));
   const foto = pessoa.fotoPerfil ?? pessoa.foto;
@@ -143,7 +143,7 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
             <h2 id="artigos-advogado" data-reveal className="mt-4 text-3xl md:text-4xl">
               Artigos {pessoa.tratamento === "Dra." ? "da" : "do"} {pessoa.nomeCurto}
             </h2>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
+            <div className="mt-12 grid gap-5 md:grid-cols-2">
               {assinados.map((a, i) => (
                 <ArticleCard key={a.slug} artigo={a} index={i} />
               ))}

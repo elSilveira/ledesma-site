@@ -2,15 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleCard } from "@/components/ArticleCard";
-import { ButtonExternal, ButtonLink } from "@/components/Button";
+import { ButtonExternal, ButtonLink, buttonClasses } from "@/components/Button";
 import { ContactBand } from "@/components/ContactBand";
+import { EscolherAdvogado } from "@/components/EscolherAdvogado";
 import { Icon } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/PageHero";
 import { Pending } from "@/components/Pending";
-import { advogadoHref, equipe, formatarOAB, linkWhatsApp, mensagemPadrao, nomeComTratamento, responsavelPorArea } from "@/config/site";
+import { advogadoHref, advogadosDaArea, equipe, formatarOAB, linkWhatsApp, mensagemPadrao, nomeComTratamento, responsavelPorArea } from "@/config/site";
 import { areaHref, getArea } from "@/content/areas";
-import { artigoHref, artigos, formatarData, getArtigo, tempoDeLeitura } from "@/content/articles";
+import { artigoHref, artigos, assinantes, formatarData, getArtigo, tempoDeLeitura } from "@/content/articles";
 import { articleJsonLd, pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -39,7 +40,9 @@ export default async function ArtigoPage({ params }: PageProps<"/artigos/[slug]"
 
   const area = getArea(artigo.area);
   const responsavel = responsavelPorArea(artigo.area);
-  const revisor = artigo.revisadoPor ? equipe.find((p) => p.slug === artigo.revisadoPor) : undefined;
+  const revisores = assinantes(artigo).flatMap((s) => equipe.filter((p) => p.slug === s));
+  // Área compartilhada: sem um responsável único, o contato abre a escolha do advogado
+  const advogados = advogadosDaArea(artigo.area);
   const relacionados = artigos.filter((a) => a.slug !== artigo.slug && a.area === artigo.area).concat(artigos.filter((a) => a.area !== artigo.area)).slice(0, 2);
   const wa = responsavel ? linkWhatsApp(responsavel, mensagemPadrao(responsavel, area.nome)) : null;
 
@@ -107,13 +110,19 @@ export default async function ArtigoPage({ params }: PageProps<"/artigos/[slug]"
             </section>
 
             <footer className="!mt-10 text-sm text-muted">
-              {revisor ? (
+              {revisores.length > 0 ? (
                 <p>
                   Assinado por{" "}
-                  <Link href={advogadoHref(revisor.slug)} className="text-paper underline decoration-gold/40 underline-offset-4 hover:text-gold">
-                    {nomeComTratamento(revisor)}
-                  </Link>{" "}
-                  ({formatarOAB(revisor.oab)}).
+                  {revisores.map((p, i) => (
+                    <span key={p.slug}>
+                      {i > 0 && (i === revisores.length - 1 ? " e " : ", ")}
+                      <Link href={advogadoHref(p.slug)} className="text-paper underline decoration-gold/40 underline-offset-4 hover:text-gold">
+                        {nomeComTratamento(p)}
+                      </Link>{" "}
+                      ({formatarOAB(p.oab)})
+                    </span>
+                  ))}
+                  .
                 </p>
               ) : (
                 <>
@@ -154,6 +163,27 @@ export default async function ArtigoPage({ params }: PageProps<"/artigos/[slug]"
                     WhatsApp
                   </ButtonExternal>
                 )}
+              </div>
+            )}
+            {!responsavel && advogados.length > 1 && (
+              <div className="card p-7">
+                <p className="eyebrow !text-[0.66rem]">Advogados da área</p>
+                <ul className="mt-4 space-y-3">
+                  {advogados.map((p) => (
+                    <li key={p.slug} className="flex items-center gap-3">
+                      <span className="relative size-11 shrink-0 overflow-hidden bg-slate">
+                        <Image src={p.foto.src} alt={p.foto.alt} fill sizes="44px" className="object-cover object-top" />
+                      </span>
+                      <Link href={advogadoHref(p.slug)} className="font-serif text-lg leading-snug text-ivory hover:text-gold">
+                        {p.nomeCurto}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <EscolherAdvogado area={artigo.area} className={`${buttonClasses("primary")} mt-6 w-full`}>
+                  <Icon name="whatsapp" className="size-4.5 shrink-0" />
+                  <span>WhatsApp</span>
+                </EscolherAdvogado>
               </div>
             )}
           </aside>

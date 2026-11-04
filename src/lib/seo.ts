@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { equipe, formatarOAB, nomeComTratamento, sedes, site } from "@/config/site";
 import { areas, areaHref } from "@/content/areas";
-import { artigoHref, type Artigo } from "@/content/articles";
+import { artigoHref, assinantes, type Artigo } from "@/content/articles";
 
 export const OG_IMAGE = { url: "/og/ledesma-advocacia.jpg", width: 1200, height: 630, alt: "Ledesma Advocacia" };
 
@@ -118,7 +118,7 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
 }
 
 export function articleJsonLd(a: Artigo) {
-  const revisor = a.revisadoPor ? equipe.find((p) => p.slug === a.revisadoPor) : undefined;
+  const revisores = assinantes(a).flatMap((s) => equipe.filter((p) => p.slug === s));
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -131,8 +131,8 @@ export function articleJsonLd(a: Artigo) {
     image: absoluteUrl(OG_IMAGE.url),
     keywords: a.palavrasChave.join(", "),
     about: { "@type": "Thing", name: areas.find((x) => x.slug === a.area)?.nome, url: absoluteUrl(areaHref(a.area)) },
-    author: revisor
-      ? { "@type": "Person", "@id": absoluteUrl(`/equipe#${revisor.slug}`), name: nomeComTratamento(revisor) }
+    author: revisores.length
+      ? revisores.map((p) => ({ "@type": "Person", "@id": absoluteUrl(`/equipe#${p.slug}`), name: nomeComTratamento(p) }))
       : { "@id": orgId, "@type": "Organization", name: site.nome },
     publisher: { "@id": orgId, "@type": "Organization", name: site.nome, logo: absoluteUrl("/brand/logo-completo.png") },
   };
