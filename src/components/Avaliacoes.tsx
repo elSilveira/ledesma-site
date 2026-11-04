@@ -1,5 +1,6 @@
 import { avaliacoes, perfilGoogle } from "@/content/avaliacoes";
 import { ButtonExternal } from "./Button";
+import { Carrossel } from "./Carrossel";
 import { SectionHeading } from "./SectionHeading";
 
 const formatarData = (iso: string) => iso.split("-").reverse().join("/");
@@ -56,16 +57,15 @@ export function Avaliacoes() {
           </ButtonExternal>
         </div>
 
-        {/* No celular, carrossel com rolagem lateral; a partir do tablet, colunas. */}
-        <ul data-reveal className="-mx-5 mt-12 flex items-start snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-4 sm:mx-0 sm:block sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 sm:columns-2 lg:columns-3">
-          {avaliacoes.map((a) => (
-            <li key={a.autor} className="w-[85%] shrink-0 snap-center sm:mb-5 sm:w-auto sm:break-inside-avoid">
-              <figure className="card flex flex-col gap-5 p-6 md:p-7">
+        <div data-reveal className="mt-12">
+          <Carrossel rotulo="Avaliações de clientes no Google">
+            {avaliacoes.map((a) => (
+              <figure key={a.autor} className="card flex w-full flex-col gap-5 p-6 md:p-7">
                 <div className="flex items-center justify-between gap-4">
                   <Estrelas nota={a.nota} />
                   <LogoGoogle className="size-4.5 shrink-0" />
                 </div>
-                <blockquote className="whitespace-pre-line text-[0.95rem] leading-relaxed text-paper">{a.texto}</blockquote>
+                <blockquote className="flex-1 text-[0.95rem] leading-relaxed text-paper">{a.texto}</blockquote>
                 <figcaption className="flex items-center gap-3 border-t border-white/5 pt-5">
                   <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-wine-deep font-serif text-sm text-ivory ring-1 ring-wine/60">
                     {iniciais(a.autor)}
@@ -78,9 +78,9 @@ export function Avaliacoes() {
                   </span>
                 </figcaption>
               </figure>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </Carrossel>
+        </div>
       </div>
     </section>
   );

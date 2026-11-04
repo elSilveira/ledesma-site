@@ -141,6 +141,8 @@ const paths = {
     </>
   ),
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  pausa: <path d="M9 6v12M15 6v12" />,
+  play: <path d="M8 5.5v13l10-6.5-10-6.5Z" />,
 } as const;
 
 export type IconName = keyof typeof paths;
