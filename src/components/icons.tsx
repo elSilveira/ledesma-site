@@ -141,6 +141,7 @@ const paths = {
     </>
   ),
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  estrela: <path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" />,
   pausa: <path d="M9 6v12M15 6v12" />,
   play: <path d="M8 5.5v13l10-6.5-10-6.5Z" />,
 } as const;

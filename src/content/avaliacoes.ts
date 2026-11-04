@@ -11,8 +11,14 @@ export type Avaliacao = {
   texto: string;
 };
 
-/** Perfil do escritório no Google Maps, onde estão todas as avaliações. */
-export const perfilGoogle = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Ledesma Advocacia, Toledo - PR")}`;
+/** Identificador do perfil do escritório no Google (Ledesma Advocacia, Rua Gen. Estilac Leal, 1467, Toledo - PR). */
+const placeId = "ChIJ58BFVKqV85QRqTu6CIWsu4E";
+
+/** Perfil no Google Maps, onde estão todas as avaliações. */
+export const perfilGoogle = `https://www.google.com/maps/place/?q=place_id:${placeId}`;
+
+/** Abre direto a janela de escrever avaliação no Google (pede login na conta Google, se preciso). */
+export const avaliarNoGoogle = `https://search.google.com/local/writereview?placeid=${placeId}`;
 
 export const avaliacoes: Avaliacao[] = [
   {

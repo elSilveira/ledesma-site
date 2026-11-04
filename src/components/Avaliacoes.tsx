@@ -1,4 +1,4 @@
-import { avaliacoes, perfilGoogle } from "@/content/avaliacoes";
+import { avaliacoes, avaliarNoGoogle, perfilGoogle } from "@/content/avaliacoes";
 import { ButtonExternal } from "./Button";
 import { Carrossel } from "./Carrossel";
 import { SectionHeading } from "./SectionHeading";
@@ -80,6 +80,19 @@ export function Avaliacoes() {
               </figure>
             ))}
           </Carrossel>
+        </div>
+
+        <div data-reveal className="mt-14 flex flex-col items-start justify-between gap-6 border border-gold/15 bg-ink/60 p-6 md:flex-row md:items-center md:p-8">
+          <div className="flex items-start gap-4">
+            <LogoGoogle className="mt-1 size-7 shrink-0" />
+            <div>
+              <p className="font-serif text-xl text-ivory md:text-2xl">Já foi atendido pelo escritório?</p>
+              <p className="mt-1 text-sm text-muted">Conte como foi a sua experiência. A avaliação é publicada no Google e leva menos de um minuto.</p>
+            </div>
+          </div>
+          <ButtonExternal href={avaliarNoGoogle} icon="estrela" className="shrink-0" aria-label="Avaliar a Ledesma Advocacia no Google (abre em nova aba)">
+            Avaliar no Google
+          </ButtonExternal>
         </div>
       </div>
     </section>
