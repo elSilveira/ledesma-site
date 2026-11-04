@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   type AreaSlug,
   advogadoHref,
+  advogadosDaArea,
   formatarOAB,
   linkTelefone,
   linkWhatsApp,
@@ -16,7 +17,8 @@ import { artigosPorArea } from "@/content/articles";
 import { faqJsonLd } from "@/lib/seo";
 import { AreaNews } from "./AreaNews";
 import { ArticleCard } from "./ArticleCard";
-import { ButtonExternal } from "./Button";
+import { ButtonExternal, buttonClasses } from "./Button";
+import { EscolherAdvogado } from "./EscolherAdvogado";
 import { ContactBand } from "./ContactBand";
 import { Icon } from "./icons";
 import { JsonLd } from "./JsonLd";
@@ -27,6 +29,8 @@ import { Pending } from "./Pending";
 export function AreaPage({ slug }: { slug: AreaSlug }) {
   const area = getArea(slug);
   const responsavel = responsavelPorArea(slug);
+  // Áreas compartilhadas: mais de um advogado, escolhido na janela do WhatsApp
+  const advogados = advogadosDaArea(slug);
   const relacionados = artigosPorArea(slug);
   const outras = areas.filter((a) => a.slug !== slug);
 
@@ -53,7 +57,7 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
           { name: area.nome, path: areaHref(slug) },
         ]}
         aside={
-          responsavel && (
+          responsavel ? (
             <div className="card flex items-center gap-5 p-5">
               <div className="relative size-24 shrink-0 overflow-hidden bg-slate">
                 <Image src={responsavel.foto.src} alt={responsavel.foto.alt} fill sizes="96px" className="object-cover object-top" />
@@ -68,6 +72,27 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
                 <p className="mt-1 text-xs text-muted">{formatarOAB(responsavel.oab)}</p>
               </div>
             </div>
+          ) : (
+            advogados.length > 1 && (
+              <div className="card p-5">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-gold">Advogados da área</p>
+                <ul className="mt-4 space-y-4">
+                  {advogados.map((p) => (
+                    <li key={p.slug} className="flex items-center gap-4">
+                      <span className="relative size-14 shrink-0 overflow-hidden bg-slate">
+                        <Image src={p.foto.src} alt={p.foto.alt} fill sizes="56px" className="object-cover object-top" />
+                      </span>
+                      <span className="min-w-0">
+                        <Link href={advogadoHref(p.slug)} className="block font-serif text-lg leading-snug text-ivory hover:text-gold">
+                          {nomeComTratamento(p)}
+                        </Link>
+                        <span className="block text-xs text-muted">{formatarOAB(p.oab)}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
           )
         }
       >
@@ -76,6 +101,14 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
             {p}
           </p>
         ))}
+        {!responsavel && advogados.length > 1 && (
+          <div className="mt-8 flex flex-wrap gap-4">
+            <EscolherAdvogado area={slug} className={buttonClasses("primary")}>
+              <Icon name="whatsapp" className="size-4.5 shrink-0" />
+              <span>Conversar pelo WhatsApp</span>
+            </EscolherAdvogado>
+          </div>
+        )}
         {wa && (
           <div className="mt-8 flex flex-wrap gap-4">
             <ButtonExternal href={wa} icon="whatsapp" aria-label={`Conversar com ${responsavel?.nomeCurto} pelo WhatsApp (abre em nova aba)`}>
@@ -163,14 +196,14 @@ export function AreaPage({ slug }: { slug: AreaSlug }) {
       )}
 
       <nav aria-label="Outras áreas de atuação" className="border-t border-gold/10 bg-ink">
-        <ul className="container-site grid md:grid-cols-2">
+        <ul className="container-site grid divide-y divide-white/5 md:grid-cols-3 md:divide-x md:divide-y-0">
           {outras.map((o, i) => (
-            <li key={o.slug} className={i === 0 ? "border-b border-white/5 md:border-b-0 md:border-r" : ""}>
-              <Link href={areaHref(o.slug)} className={`group flex items-center gap-5 py-10 ${i === 0 ? "md:pr-10" : "md:pl-10"}`}>
+            <li key={o.slug}>
+              <Link href={areaHref(o.slug)} className={`group flex items-center gap-5 py-10 ${i === 0 ? "md:pr-8" : i === outras.length - 1 ? "md:pl-8" : "md:px-8"}`}>
                 <Icon name={o.icone} className="size-8 shrink-0 text-gold" />
                 <span className="flex-1">
                   <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-muted">Outra área</span>
-                  <span className="mt-1 block font-serif text-2xl text-ivory transition-colors group-hover:text-gold">{o.nome}</span>
+                  <span className="mt-1 block font-serif text-xl text-ivory transition-colors group-hover:text-gold">{o.nome}</span>
                 </span>
                 <Icon name="seta" className="size-5 text-gold transition-transform duration-300 group-hover:translate-x-1" />
               </Link>

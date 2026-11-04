@@ -2,17 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import { equipe, linkWhatsApp, mensagemPadrao, nomeComTratamento } from "@/config/site";
+import { type ReactNode, useId, useRef } from "react";
+import { type AreaSlug, advogadosDaArea, equipe, formatarOAB, linkWhatsApp, mensagemPadrao, nomeComTratamento } from "@/config/site";
 import { getArea } from "@/content/areas";
 import { Icon } from "./icons";
 
 /**
  * Botão "Fale com o escritório": abre uma janela para escolher o advogado e segue para o WhatsApp dele
- * com a mensagem pronta. Sem JavaScript, continua sendo um link para /contato.
+ * com a mensagem pronta. Com `area`, lista só quem atua nela e a mensagem cita essa área.
+ * Sem JavaScript, continua sendo um link para /contato.
  */
-export function EscolherAdvogado({ className = "", children }: { className?: string; children: React.ReactNode }) {
+export function EscolherAdvogado({ className = "", area, children }: { className?: string; area?: AreaSlug; children: ReactNode }) {
   const janela = useRef<HTMLDialogElement>(null);
+  const titulo = useId();
+  const lista = area ? advogadosDaArea(area) : equipe;
   const fechar = () => janela.current?.close();
 
   return (
@@ -31,7 +34,7 @@ export function EscolherAdvogado({ className = "", children }: { className?: str
 
       <dialog
         ref={janela}
-        aria-labelledby="escolher-advogado"
+        aria-labelledby={titulo}
         onClick={(e) => e.target === e.currentTarget && fechar()}
         className="m-auto w-[min(100%-2rem,30rem)] border border-gold/20 bg-coal p-0 text-paper shadow-2xl backdrop:bg-black/75 backdrop:backdrop-blur-sm"
       >
@@ -39,7 +42,7 @@ export function EscolherAdvogado({ className = "", children }: { className?: str
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="eyebrow">Atendimento pelo WhatsApp</p>
-              <h2 id="escolher-advogado" className="mt-3 text-2xl md:text-3xl">
+              <h2 id={titulo} className="mt-3 text-2xl md:text-3xl">
                 Com quem você quer falar?
               </h2>
             </div>
@@ -47,12 +50,16 @@ export function EscolherAdvogado({ className = "", children }: { className?: str
               <Icon name="fechar" className="size-5" />
             </button>
           </div>
-          <p className="mt-3 text-sm text-muted">Escolha o advogado da área do seu assunto. A conversa abre com uma mensagem pronta para enviar.</p>
+          <p className="mt-3 text-sm text-muted">
+            {area
+              ? `Os advogados abaixo atuam em ${getArea(area).nome}. Escolha com quem prefere conversar; a mensagem já vem pronta para enviar.`
+              : "Escolha o advogado da área do seu assunto. A conversa abre com uma mensagem pronta para enviar."}
+          </p>
 
           <ul className="mt-6 space-y-3">
-            {equipe.map((p) => {
-              const area = getArea(p.area);
-              const wa = linkWhatsApp(p, mensagemPadrao(p, area.nome));
+            {lista.map((p) => {
+              const principal = getArea(p.area);
+              const wa = linkWhatsApp(p, mensagemPadrao(p, area ? getArea(area).nome : principal.nome));
               if (!wa) return null;
               return (
                 <li key={p.slug}>
@@ -71,7 +78,13 @@ export function EscolherAdvogado({ className = "", children }: { className?: str
                         {nomeComTratamento(p)}
                       </span>
                       <span className="mt-1 flex items-center gap-1.5 text-xs text-muted">
-                        <Icon name={area.icone} className="size-3.5 text-gold" /> {area.nome}
+                        {area ? (
+                          formatarOAB(p.oab)
+                        ) : (
+                          <>
+                            <Icon name={principal.icone} className="size-3.5 text-gold" /> {principal.nome}
+                          </>
+                        )}
                       </span>
                     </span>
                     <Icon name="whatsapp" className="size-6 shrink-0 text-gold" />

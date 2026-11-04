@@ -15,7 +15,7 @@ export default function EquipePage() {
   return (
     <>
       <PageHero eyebrow="Nossa equipe" title="Os advogados do escritório" crumbs={[{ name: "Equipe", path: "/equipe" }]}>
-        <p>Cada área de atuação conta com um profissional responsável, com contato direto pelo telefone ou pelo WhatsApp.</p>
+        <p>Cada advogado responde por uma área de atuação, e os três atuam juntos em Direito de Família e Sucessões, com contato direto pelo telefone ou pelo WhatsApp.</p>
       </PageHero>
 
       <section aria-label="Perfis profissionais" className="bg-ink py-24">

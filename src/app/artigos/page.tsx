@@ -25,7 +25,7 @@ export default function ArtigosPage() {
       <section aria-label="Lista de artigos" className="bg-ink py-20 md:py-24">
         <div className="container-site">
           <nav aria-label="Artigos por área" className="flex flex-wrap gap-3">
-            {areas.map((a) => (
+            {areas.filter((a) => lista.some((x) => x.area === a.slug)).map((a) => (
               <a
                 key={a.slug}
                 href={`#artigos-${a.slug}`}

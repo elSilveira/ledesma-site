@@ -29,10 +29,11 @@ export default function EscritorioPage() {
       <section aria-labelledby="quem-somos" className="bg-ink py-24 md:py-32">
         <div className="container-site grid gap-16 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
-            <SectionHeading id="quem-somos" eyebrow="Quem somos" title="Uma equipe, três áreas de atuação">
+            <SectionHeading id="quem-somos" eyebrow="Quem somos" title="Uma equipe, quatro áreas de atuação">
               <p>
-                A {site.razaoSocial} reúne advogados com atuação em Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário. Cada área tem um
-                profissional responsável, o que permite acompanhamento direto e comunicação objetiva com quem procura o escritório.
+                A {site.razaoSocial} reúne advogados com atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões. Criminal, Trabalhista e
+                Previdenciário têm, cada uma, um profissional responsável, e os três advogados atuam juntos em Família e Sucessões, o que permite
+                acompanhamento direto e comunicação objetiva com quem procura o escritório.
               </p>
               <p className="mt-4">
                 Além do atendimento presencial nas duas sedes, o escritório também atende a distância, por meios digitais.

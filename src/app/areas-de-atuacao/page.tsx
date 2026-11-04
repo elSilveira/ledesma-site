@@ -15,10 +15,10 @@ export default function AreasPage() {
   return (
     <>
       <PageHero eyebrow="Áreas de atuação" title="Onde o escritório atua" crumbs={[{ name: "Áreas de Atuação", path: "/areas-de-atuacao" }]}>
-        <p>Três áreas, cada uma com um advogado responsável e conteúdo informativo sobre os temas mais frequentes.</p>
+        <p>Quatro áreas, com advogados responsáveis e conteúdo informativo sobre os temas mais frequentes.</p>
       </PageHero>
       <section aria-label="Lista de áreas" className="bg-ink py-24">
-        <div className="container-site grid gap-5 md:grid-cols-3">
+        <div className="container-site grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {areas.map((a, i) => (
             <AreaCard key={a.slug} area={a} index={i} />
           ))}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { type FormEvent, useId, useRef, useState } from "react";
-import { type AreaSlug, equipe, linkWhatsApp } from "@/config/site";
+import { type AreaSlug, advogadosDaArea, linkWhatsApp, nomeComTratamento } from "@/config/site";
 import { areas } from "@/content/areas";
 import { buttonClasses } from "./Button";
 import { Icon } from "./icons";
@@ -14,10 +14,10 @@ import { Icon } from "./icons";
  * nada é armazenado pelo site e o envio só ocorre quando a pessoa confirma no WhatsApp.
  */
 
-type Campos = { nome: string; telefone: string; email: string; cidade: string; area: AreaSlug | ""; mensagem: string; consentimento: boolean };
+type Campos = { nome: string; telefone: string; email: string; cidade: string; area: AreaSlug | ""; advogado: string; mensagem: string; consentimento: boolean };
 type Erros = Partial<Record<keyof Campos, string>>;
 
-const vazio: Campos = { nome: "", telefone: "", email: "", cidade: "", area: "", mensagem: "", consentimento: false };
+const vazio: Campos = { nome: "", telefone: "", email: "", cidade: "", area: "", advogado: "", mensagem: "", consentimento: false };
 
 const rotulos: Record<keyof Campos, string> = {
   nome: "Nome completo",
@@ -25,6 +25,7 @@ const rotulos: Record<keyof Campos, string> = {
   email: "E-mail",
   cidade: "Cidade",
   area: "Área do assunto",
+  advogado: "Advogado",
   mensagem: "Mensagem",
   consentimento: "Consentimento",
 };
@@ -42,6 +43,7 @@ export function validar(c: Campos): Erros {
   if (c.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.email.trim())) e.email = "Informe um e-mail válido ou deixe o campo em branco.";
 
   if (!c.area) e.area = "Escolha a área mais próxima do seu assunto.";
+  else if (advogadosDaArea(c.area).length > 1 && !c.advogado) e.advogado = "Escolha com qual advogado prefere conversar.";
 
   const msg = c.mensagem.trim();
   if (!msg) e.mensagem = "Descreva brevemente o assunto.";
@@ -80,7 +82,9 @@ export function ContactForm() {
       return;
     }
 
-    const responsavel = equipe.find((p) => p.area === campos.area);
+    // Áreas compartilhadas por mais de um advogado usam a escolha feita no formulário
+    const opcoes = campos.area ? advogadosDaArea(campos.area) : [];
+    const responsavel = opcoes.length === 1 ? opcoes[0] : opcoes.find((p) => p.slug === campos.advogado);
     const area = areas.find((a) => a.slug === campos.area);
     const href = responsavel && area ? linkWhatsApp(responsavel, montarMensagem(campos, area.nome, responsavel.nomeCurto)) : null;
     if (!href || !responsavel) {
@@ -121,7 +125,7 @@ export function ContactForm() {
         Envie sua mensagem
       </h2>
       <p className="mt-3 text-sm text-muted">
-        Campos marcados com <span className="text-gold">*</span> são obrigatórios. Ao enviar, o WhatsApp do advogado responsável pela área será aberto com a sua mensagem pronta.
+        Campos marcados com <span className="text-gold">*</span> são obrigatórios. Ao enviar, o WhatsApp do advogado da área será aberto com a sua mensagem pronta.
       </p>
 
       {listaErros.length > 0 && (
@@ -218,7 +222,10 @@ export function ContactForm() {
               {...aria("area", true)}
               name="area"
               value={campos.area}
-              onChange={(e) => set("area", e.target.value as AreaSlug | "")}
+              onChange={(e) => {
+                set("area", e.target.value as AreaSlug | "");
+                setCampos((c) => ({ ...c, advogado: "" }));
+              }}
               className={`${campoBase} ${borda("area")} appearance-none pr-10`}
             >
               <option value="">Selecione</option>
@@ -235,6 +242,35 @@ export function ContactForm() {
           </p>
           {erro("area")}
         </div>
+
+        {campos.area && advogadosDaArea(campos.area).length > 1 && (
+          <div>
+            <label htmlFor={id("advogado")} className="text-sm text-paper">
+              Advogado <span className="text-gold">*</span>
+            </label>
+            <div className="relative">
+              <select
+                {...aria("advogado", true)}
+                name="advogado"
+                value={campos.advogado}
+                onChange={(e) => set("advogado", e.target.value)}
+                className={`${campoBase} ${borda("advogado")} appearance-none pr-10`}
+              >
+                <option value="">Selecione</option>
+                {advogadosDaArea(campos.area).map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {nomeComTratamento(p)}
+                  </option>
+                ))}
+              </select>
+              <Icon name="setaBaixo" className="pointer-events-none absolute right-4 top-1/2 mt-1 size-4 -translate-y-1/2 text-gold" />
+            </div>
+            <p id={`${id("advogado")}-dica`} className="mt-2 text-xs text-muted">
+              Todos atuam nesta área. A mensagem vai para o WhatsApp de quem você escolher.
+            </p>
+            {erro("advogado")}
+          </div>
+        )}
 
         <div>
           <label htmlFor={id("cidade")} className="text-sm text-paper">

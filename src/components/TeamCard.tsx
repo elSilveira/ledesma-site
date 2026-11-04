@@ -9,6 +9,7 @@ import { Pending } from "./Pending";
 /** Perfil profissional: só exibe o que foi informado; o restante fica pendente. */
 export function TeamCard({ pessoa, index, detalhado = false }: { pessoa: Integrante; index: number; detalhado?: boolean }) {
   const area = getArea(pessoa.area);
+  const areasDaPessoa = [pessoa.area, ...(pessoa.areasAdicionais ?? [])].map(getArea);
   const wa = linkWhatsApp(pessoa, mensagemPadrao(pessoa, area.nome));
   return (
     <article
@@ -38,10 +39,15 @@ export function TeamCard({ pessoa, index, detalhado = false }: { pessoa: Integra
         <p className="mt-2 text-sm text-muted">{formatarOAB(pessoa.oab)}</p>
         <div className="hairline my-6" />
         <p className="text-sm">
-          <span className="text-muted">Área de atuação: </span>
-          <Link href={areaHref(area.slug)} className="text-ivory underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold">
-            {area.nome}
-          </Link>
+          <span className="text-muted">{areasDaPessoa.length > 1 ? "Áreas de atuação: " : "Área de atuação: "}</span>
+          {areasDaPessoa.map((a, i) => (
+            <span key={a.slug}>
+              {i > 0 && <span className="text-muted"> · </span>}
+              <Link href={areaHref(a.slug)} className="text-ivory underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold">
+                {a.nome}
+              </Link>
+            </span>
+          ))}
         </p>
         {detalhado && (
           <div className="mt-5 space-y-3 text-sm">

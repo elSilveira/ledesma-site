@@ -85,7 +85,7 @@ export function organizationJsonLd() {
         image: absoluteUrl(p.foto.src),
         telephone: `+${p.telefone}`,
         worksFor: { "@id": orgId },
-        knowsAbout: areas.find((a) => a.slug === p.area)?.nome,
+        knowsAbout: [p.area, ...(p.areasAdicionais ?? [])].map((s) => areas.find((a) => a.slug === s)?.nome),
         identifier: p.oab.map((r) => ({ "@type": "PropertyValue", propertyID: `OAB/${r.uf}`, value: r.numero })),
         description: `${p.profissao} · ${formatarOAB(p.oab)}`,
       })),

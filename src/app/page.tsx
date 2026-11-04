@@ -20,7 +20,7 @@ export const metadata = {
   ...pageMetadata({
   title: homeTitle,
   description:
-    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS). Atuação em Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário, com atendimento presencial e a distância.",
+    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS). Atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial e a distância.",
   path: "/",
   }),
   title: { absolute: homeTitle },
@@ -48,7 +48,7 @@ export default function Home() {
               Orientação jurídica com ética, técnica e <em className="font-serif italic text-gold">proximidade.</em>
             </h1>
             <p className="hero-rise mt-7 max-w-xl text-lg text-paper" style={delay(240)}>
-              Atuação em Direito Criminal e Penal, Direito Trabalhista e Direito Previdenciário, com atendimento presencial nas sedes e também a distância.
+              Atuação em Direito Criminal e Penal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial nas sedes e também a distância.
             </p>
             <div className="hero-rise mt-10 flex flex-wrap gap-4" style={delay(360)}>
               <ButtonLink href="/contato">Fale com o escritório</ButtonLink>
@@ -91,14 +91,14 @@ export default function Home() {
       <section aria-labelledby="areas-titulo" className="relative border-t border-gold/10 bg-coal py-24 md:py-32">
         <div className="container-site">
           <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-            <SectionHeading id="areas-titulo" eyebrow="Áreas de atuação" title="Atuação técnica em três áreas do Direito">
-              <p>Cada área é conduzida por um(a) advogado(a) da equipe, com acompanhamento direto do início ao fim.</p>
+            <SectionHeading id="areas-titulo" eyebrow="Áreas de atuação" title="Atuação técnica em quatro áreas do Direito">
+              <p>Cada área conta com advogados da equipe, com acompanhamento direto do início ao fim.</p>
             </SectionHeading>
             <ButtonLink href="/areas-de-atuacao" variant="ghost" data-reveal>
               Ver todas as áreas
             </ButtonLink>
           </div>
-          <div className="mt-14 grid gap-5 md:grid-cols-3">
+          <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {areas.map((a, i) => (
               <AreaCard key={a.slug} area={a} index={i} />
             ))}

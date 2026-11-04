@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps<"/equipe/[slug]">) 
   const area = getArea(p.area);
   return pageMetadata({
     title: nomeComTratamento(p),
-    description: `${nomeComTratamento(p)}, ${p.profissao.toLowerCase()} da Ledesma Advocacia (${formatarOAB(p.oab)}), responsável pela área de ${area.nome}.`,
+    description: `${nomeComTratamento(p)}, ${p.profissao.toLowerCase()} da Ledesma Advocacia (${formatarOAB(p.oab)}), responsável pela área de ${area.nome}${p.areasAdicionais?.length ? `, com atuação também em ${p.areasAdicionais.map((s) => getArea(s).nome).join(", ")}` : ""}.`,
     path: advogadoHref(p.slug),
   });
 }
@@ -35,6 +35,7 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
   if (!pessoa) notFound();
 
   const area = getArea(pessoa.area);
+  const areasDaPessoa = [pessoa.area, ...(pessoa.areasAdicionais ?? [])].map(getArea);
   const assinados = artigosOrdenados().filter((a) => a.revisadoPor === pessoa.slug);
   const colegas = equipe.filter((p) => p.slug !== pessoa.slug);
   const wa = linkWhatsApp(pessoa, mensagemPadrao(pessoa, area.nome));
@@ -89,10 +90,15 @@ export default async function AdvogadoPage({ params }: PageProps<"/equipe/[slug]
               {formatarOAB(pessoa.oab)}
             </p>
             <p className="hero-rise mt-6 text-sm" style={delay(220)}>
-              <span className="text-muted">Área de atuação: </span>
-              <Link href={areaHref(area.slug)} className="text-ivory underline decoration-gold/40 underline-offset-4 hover:decoration-gold">
-                {area.nome}
-              </Link>
+              <span className="text-muted">{areasDaPessoa.length > 1 ? "Áreas de atuação: " : "Área de atuação: "}</span>
+              {areasDaPessoa.map((a, i) => (
+                <span key={a.slug}>
+                  {i > 0 && <span className="text-muted"> · </span>}
+                  <Link href={areaHref(a.slug)} className="text-ivory underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold">
+                    {a.nome}
+                  </Link>
+                </span>
+              ))}
             </p>
             {pessoa.minibio && (
               <p className="hero-rise mt-6 max-w-2xl text-[1.05rem] text-paper" style={delay(260)}>

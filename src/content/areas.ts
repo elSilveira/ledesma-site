@@ -204,6 +204,56 @@ export const areas: Area[] = [
       },
     ],
   },
+  {
+    slug: "direito-de-familia-e-sucessoes",
+    nome: "Direito de Família e Sucessões",
+    nomeCurto: "Família e Sucessões",
+    icone: "pessoas",
+    seoTitulo: "Direito de Família e Sucessões em Toledo – PR",
+    seoDescricao:
+      "Atuação em Direito de Família e Sucessões em Toledo (PR) e Iguatemi (MS): divórcio, união estável, guarda, pensão alimentícia, inventário, partilha e testamento.",
+    resumo: "Orientação em questões de família e na transmissão de bens, com atenção ao diálogo e ao sigilo.",
+    introducao: [
+      "O Direito de Família trata das relações entre cônjuges, companheiros, pais e filhos: casamento, união estável, divórcio, guarda, convivência e alimentos. O Direito das Sucessões regula a transmissão do patrimônio após o falecimento, por meio do inventário, da partilha e do testamento.",
+      "São assuntos que envolvem vínculos pessoais. A atuação do escritório prioriza a orientação clara sobre direitos e deveres e, sempre que possível, a solução consensual, judicial ou em cartório, com sigilo profissional.",
+    ],
+    secoes: [
+      {
+        id: "familia",
+        titulo: "Família",
+        introducao: "Alguns dos assuntos com que o escritório trabalha:",
+        topicos: [
+          { titulo: "Divórcio", texto: "Divórcio consensual ou litigioso, judicial ou em cartório, incluindo a partilha dos bens do casal.", icone: "documento" },
+          { titulo: "União estável", texto: "Reconhecimento, formalização e dissolução da união estável, com definição do regime de bens.", icone: "aperto" },
+          { titulo: "Guarda e convivência", texto: "Definição da guarda dos filhos, compartilhada ou unilateral, e do regime de convivência.", icone: "pessoas" },
+          { titulo: "Pensão alimentícia", texto: "Fixação, revisão e cobrança de alimentos, considerando a necessidade de quem recebe e a possibilidade de quem paga.", icone: "moeda" },
+          { titulo: "Investigação de paternidade", texto: "Ações de reconhecimento ou negativa de paternidade e seus efeitos, como nome e alimentos.", icone: "coracao" },
+        ],
+      },
+      {
+        id: "sucessoes",
+        titulo: "Sucessões",
+        introducao: "A transmissão de bens segue regras próprias, que dependem da existência de testamento, de herdeiros e do regime de bens.",
+        topicos: [
+          { titulo: "Inventário e partilha", texto: "Inventário judicial ou extrajudicial (em cartório) para a divisão dos bens deixados entre os herdeiros.", icone: "balanca" },
+          { titulo: "Testamento", texto: "Orientação sobre as formas de testamento e os limites previstos em lei para dispor do patrimônio.", icone: "livro" },
+          { titulo: "Planejamento sucessório", texto: "Organização prévia da transmissão do patrimônio, com instrumentos como doação e testamento.", icone: "chave" },
+        ],
+      },
+    ],
+    perguntas: [
+      {
+        pergunta: "O divórcio e o inventário podem ser feitos em cartório?",
+        resposta:
+          "Em regra, sim, quando há acordo entre os envolvidos, por meio de escritura pública e sempre com a assistência de advogado. Há requisitos específicos, por exemplo quando existem filhos menores ou herdeiros incapazes, que precisam ser analisados em cada caso.",
+      },
+      {
+        pergunta: "Existe prazo para abrir o inventário?",
+        resposta:
+          "O Código de Processo Civil prevê a abertura do inventário em até dois meses a contar do falecimento. O atraso pode gerar multa sobre o imposto de transmissão (ITCMD), conforme a lei de cada estado.",
+      },
+    ],
+  },
 ];
 
 export const getArea = (slug: AreaSlug) => areas.find((a) => a.slug === slug)!;

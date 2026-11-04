@@ -14,7 +14,7 @@
  * Este arquivo não importa outros módulos: o script de pendências o lê diretamente com Node.
  */
 
-export type AreaSlug = "direito-criminal-e-penal" | "direito-trabalhista" | "direito-previdenciario";
+export type AreaSlug = "direito-criminal-e-penal" | "direito-trabalhista" | "direito-previdenciario" | "direito-de-familia-e-sucessoes";
 
 /** Público atendido na área trabalhista. `null` = ainda não confirmado pelo escritório. */
 export type PublicoTrabalhista = "trabalhadores" | "empresas" | "ambos" | null;
@@ -31,7 +31,10 @@ export type Integrante = {
   /** [cliente] confirmada pelo envio dos números de inscrição na OAB. */
   profissao: "Advogado" | "Advogada";
   oab: RegistroOAB[];
+  /** Área principal, pela qual o(a) advogado(a) responde sozinho(a). */
   area: AreaSlug;
+  /** [cliente] Áreas em que também atua, junto com outros advogados da equipe. */
+  areasAdicionais?: AreaSlug[];
   /** Somente dígitos, com DDI. [cliente] */
   telefone: string;
   /** Exibição do telefone, como informado pelo cliente. */
@@ -151,6 +154,7 @@ export const equipe: Integrante[] = [
     profissao: "Advogado",
     oab: [{ uf: "MS", numero: "31.011" }],
     area: "direito-trabalhista",
+    areasAdicionais: ["direito-de-familia-e-sucessoes"],
     telefone: "5567999213677",
     telefoneExibicao: "(67) 9 9921-3677",
     whatsapp: true,
@@ -176,6 +180,7 @@ export const equipe: Integrante[] = [
       { uf: "PR", numero: "98.646" },
     ],
     area: "direito-criminal-e-penal",
+    areasAdicionais: ["direito-de-familia-e-sucessoes"],
     telefone: "5567996381323",
     telefoneExibicao: "(67) 9 9638-1323",
     whatsapp: true,
@@ -199,6 +204,7 @@ export const equipe: Integrante[] = [
     profissao: "Advogada",
     oab: [{ uf: "MS", numero: "31.010" }],
     area: "direito-previdenciario",
+    areasAdicionais: ["direito-de-familia-e-sucessoes"],
     telefone: "5567993125666",
     telefoneExibicao: "(67) 9 9312-5666",
     whatsapp: true,
@@ -243,7 +249,14 @@ export const linkTelefone = (p: Integrante) => `tel:+${p.telefone}`;
 
 export const advogadoHref = (slug: string) => `/equipe/${slug}`;
 
-export const responsavelPorArea = (area: AreaSlug) => equipe.find((p) => p.area === area);
+/** Advogado(a) que responde sozinho(a) pela área; `undefined` nas áreas compartilhadas por mais de um. */
+export const responsavelPorArea = (area: AreaSlug) => {
+  const lista = advogadosDaArea(area);
+  return lista.length === 1 ? lista[0] : undefined;
+};
+
+/** Todos os advogados que atuam na área, como área principal ou adicional. */
+export const advogadosDaArea = (area: AreaSlug) => equipe.filter((p) => p.area === area || p.areasAdicionais?.includes(area));
 
 export const mensagemPadrao = (p: Integrante, areaNome: string) =>
   `Olá, ${p.nomeCurto}. Gostaria de solicitar um atendimento sobre ${areaNome}.`;

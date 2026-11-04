@@ -264,6 +264,8 @@ const TERMOS: Record<AreaSlug, RegExp> = {
     /\b(trabalhist|trabalhador|trabalho\b|tst\b|trt|empregad|emprego\b|clt\b|fgts|justa causa|horas? extras?|jornada de trabalho|sindica|vinculo empregaticio|aviso previo|reclamacao trabalhista|assedio moral|terceirizac|reforma trabalhista)/,
   "direito-previdenciario":
     /\b(inss|previdenc|previdenciari|aposentad|bpc\b|loas\b|pensao por morte|auxilio[- ]doenca|auxilio por incapacidade|salario[- ]maternidade|beneficio assistencial|rgps\b|seguridade social|incapacidade permanente)/,
+  "direito-de-familia-e-sucessoes":
+    /\b(divorci|uniao estavel|pensao alimenticia|alimentos gravidicos|guarda (compartilhada|unilateral|dos filhos|do filho|da filha)|convivencia familiar|alienacao parental|paternidade|adocao|direito de familia|vara de familia|inventari|heranca|herdeir|partilha de bens|testament|sucessao hereditaria|sucessori|itcmd)/,
 };
 
 function classificarAreas(texto: string): AreaSlug[] {
