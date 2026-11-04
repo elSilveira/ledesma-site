@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { advogadoHref, equipe } from "@/config/site";
 import { areas, areaHref, getArea } from "@/content/areas";
 import { buttonClasses } from "./Button";
+import { EscolherAdvogado } from "./EscolherAdvogado";
 import { Icon } from "./icons";
 import { Logo } from "./Logo";
 
@@ -162,9 +163,9 @@ function HeaderView({ pathname }: { pathname: string | null }) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/contato" className={`${buttonClasses("primary")} whitespace-nowrap !px-5 !py-3 max-sm:!hidden lg:max-xl:!hidden`}>
+          <EscolherAdvogado className={`${buttonClasses("primary")} whitespace-nowrap !px-5 !py-3 max-sm:!hidden lg:max-xl:!hidden`}>
             Fale com o escritório
-          </Link>
+          </EscolherAdvogado>
           <button
             type="button"
             className="grid size-11 place-items-center text-ivory lg:hidden"
@@ -214,9 +215,9 @@ function HeaderView({ pathname }: { pathname: string | null }) {
               </li>
             ))}
           </ul>
-          <Link href="/contato" className={`${buttonClasses("primary")} mt-8 w-full`}>
+          <EscolherAdvogado className={`${buttonClasses("primary")} mt-8 w-full`}>
             Fale com o escritório
-          </Link>
+          </EscolherAdvogado>
         </nav>
       </div>
     </header>
