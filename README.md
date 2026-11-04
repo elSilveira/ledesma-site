@@ -21,6 +21,7 @@ npm run pendencias   # lista o que falta preencher antes da publicação
 | Dados do escritório, sedes, equipe, telefones, redes, público trabalhista | `src/config/site.ts` |
 | Textos das áreas de atuação | `src/content/areas.ts` |
 | Artigos (basta adicionar um objeto; página, sitemap e links internos são gerados) | `src/content/articles.ts` |
+| Avaliações do Google exibidas em /contato (copiadas literalmente, sem editar o texto) | `src/content/avaliacoes.ts` |
 | Fontes de notícias (RSS): nome, tipo, local de referência, URL do feed | `src/config/noticias.ts` |
 | Leitura dos feeds, classificação por área/tribunal/região | `src/lib/noticias.ts` |
 | Cores e tipografia | `src/app/globals.css` (bloco `@theme`) |

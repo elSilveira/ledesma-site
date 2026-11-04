@@ -1,3 +1,4 @@
+import { Avaliacoes } from "@/components/Avaliacoes";
 import { ContactForm } from "@/components/ContactForm";
 import { Icon } from "@/components/icons";
 import { PageHero } from "@/components/PageHero";
@@ -130,6 +131,8 @@ export default function ContatoPage() {
           </div>
         </div>
       </section>
+
+      <Avaliacoes />
     </>
   );
 }
