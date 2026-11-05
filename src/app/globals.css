@@ -209,3 +209,76 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Painel: brilho no item que acabou de mudar de ordem (duas cópias para reiniciar a animação a cada troca) */
+@keyframes destaque-ordem-a {
+  0%,
+  35% {
+    box-shadow: 0 0 0 2px var(--color-gold), 0 0 28px 6px color-mix(in oklab, var(--color-gold) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent, 0 0 0 0 transparent;
+  }
+}
+@keyframes destaque-ordem-b {
+  0%,
+  35% {
+    box-shadow: 0 0 0 2px var(--color-gold), 0 0 28px 6px color-mix(in oklab, var(--color-gold) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent, 0 0 0 0 transparent;
+  }
+}
+
+/* Listas de escolha (select) com as cores do site. Fora das camadas do Tailwind de propósito:
+   precisa valer sobre o "appearance-none" dos campos. */
+select option,
+select optgroup {
+  background-color: var(--color-coal);
+  color: var(--color-ivory);
+}
+
+/* Navegadores com select personalizável (Chrome e Edge 135+): a lista aberta inteira segue o visual do site.
+   Nos demais, ficam as cores acima e o destaque de seleção do sistema. */
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+  /* A seta dourada já é desenhada ao lado de cada campo */
+  select::picker-icon {
+    display: none;
+  }
+  ::picker(select) {
+    margin-block: 4px;
+    padding-block: 0.35rem;
+    border: 1px solid color-mix(in oklab, var(--color-gold) 35%, transparent);
+    border-radius: 2px;
+    background: var(--color-coal);
+    color: var(--color-ivory);
+    box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.75);
+  }
+  select option {
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  select option:hover,
+  select option:focus-visible {
+    outline: none;
+    background: color-mix(in oklab, var(--color-gold) 14%, transparent);
+    color: var(--color-gold);
+  }
+  select option:checked {
+    color: var(--color-gold);
+    font-weight: 600;
+  }
+  select option::checkmark {
+    color: var(--color-gold);
+  }
+  select option[value=""] {
+    color: var(--color-muted);
+  }
+}

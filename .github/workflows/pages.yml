@@ -3,10 +3,17 @@ name: Deploy no GitHub Pages
 on:
   push:
     branches: [main]
-  # GitHub Pages só serve arquivos estáticos: o site é refeito periodicamente para atualizar as notícias
+  # GitHub Pages só serve arquivos estáticos: o site é refeito periodicamente para atualizar as notícias.
+  # Também é a alternativa se o disparo automático do CMS falhar.
   schedule:
     - cron: "*/30 * * * *"
+  # Disparado pelo CMS (Edge Function "disparar-deploy") ao publicar, editar, retirar ou excluir um artigo publicado
   workflow_dispatch:
+    inputs:
+      cms_deploy_id:
+        description: "Pedido de atualização do CMS (preenchido automaticamente; pode ficar em branco)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -17,10 +24,36 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Avisos ao CMS (Edge Function "confirmar-deploy"). Nunca impedem o deploy: sem o segredo ou com o CMS fora do ar,
+# o passo só registra um aviso. Variável SUPABASE_URL e segredo CMS_DEPLOY_SEGREDO em
+# Settings > Secrets and variables > Actions.
+env:
+  CMS_URL: ${{ vars.SUPABASE_URL }}
+  CMS_DEPLOY_SEGREDO: ${{ secrets.CMS_DEPLOY_SEGREDO }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      iniciado_em: ${{ steps.inicio.outputs.iniciado_em }}
+      manifesto: ${{ steps.manifesto.outputs.manifesto }}
     steps:
+      # O início é marcado ANTES de ler o CMS: pedidos feitos até aqui entram neste build
+      - id: inicio
+        name: Avisar o CMS do início
+        continue-on-error: true
+        env:
+          CMS_DEPLOY_ID: ${{ inputs.cms_deploy_id }}
+        run: |
+          iniciado_em=$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)
+          echo "iniciado_em=$iniciado_em" >> "$GITHUB_OUTPUT"
+          if [ -z "$CMS_URL" ] || [ -z "$CMS_DEPLOY_SEGREDO" ]; then echo "Aviso ao CMS não configurado; seguindo sem ele."; exit 0; fi
+          corpo=$(jq -n --argjson run "$GITHUB_RUN_ID" --arg id "$CMS_DEPLOY_ID" --arg ini "$iniciado_em" \
+            '{etapa: "inicio", run_id: $run, cms_deploy_id: $id, iniciado_em: $ini}')
+          curl -fsS --max-time 20 --retry 2 -X POST "$CMS_URL/functions/v1/confirmar-deploy" \
+            -H "Content-Type: application/json" -H "x-cms-segredo: $CMS_DEPLOY_SEGREDO" -d "$corpo" \
+            || echo "::warning::Não foi possível avisar o CMS do início do deploy."
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -32,6 +65,19 @@ jobs:
         uses: actions/configure-pages@v5
 
       - run: npm ci
+
+      # Artigos publicados no CMS (Supabase), só com a chave pública. Se a sincronização falhar
+      # (rede, chave, artigo inválido ou nenhum artigo), o job para aqui e a versão no ar continua.
+      - name: Sincronizar artigos do CMS
+        run: node --experimental-strip-types --no-warnings scripts/sincronizar-artigos.mjs
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+
+      # Revisão de cada artigo incluído neste build (fica fora do site; só vai para a confirmação)
+      - id: manifesto
+        name: Guardar o manifesto do build
+        run: echo "manifesto=$(jq -c '.artigos' .cms/manifesto.json)" >> "$GITHUB_OUTPUT"
 
       # Recursos que exigem servidor Node e não existem no export estático:
       # proxy (404 de slugs desconhecidos, que no Pages já vêm do 404.html) e robots/sitemap
@@ -65,3 +111,36 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # Só depois de o GitHub Pages publicar: o painel passa a mostrar "No ar"
+      - name: Confirmar no CMS que está no ar
+        continue-on-error: true
+        env:
+          INICIADO_EM: ${{ needs.build.outputs.iniciado_em }}
+          MANIFESTO: ${{ needs.build.outputs.manifesto }}
+        run: |
+          if [ -z "$CMS_URL" ] || [ -z "$CMS_DEPLOY_SEGREDO" ]; then echo "Aviso ao CMS não configurado; seguindo sem ele."; exit 0; fi
+          corpo=$(jq -n --argjson run "$GITHUB_RUN_ID" --arg ini "$INICIADO_EM" --argjson man "$MANIFESTO" \
+            '{etapa: "concluido", run_id: $run, iniciado_em: $ini, manifesto: $man}')
+          curl -fsS --max-time 20 --retry 2 -X POST "$CMS_URL/functions/v1/confirmar-deploy" \
+            -H "Content-Type: application/json" -H "x-cms-segredo: $CMS_DEPLOY_SEGREDO" -d "$corpo" \
+            || echo "::warning::Não foi possível confirmar o deploy no CMS."
+
+  # Build ou publicação falhou (ou foi cancelado): o painel mostra o erro e os pedidos voltam a pendentes
+  avisar-falha:
+    needs: [build, deploy]
+    if: ${{ always() && (needs.build.result == 'failure' || needs.deploy.result == 'failure' || needs.build.result == 'cancelled' || needs.deploy.result == 'cancelled') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Avisar o CMS da falha
+        continue-on-error: true
+        env:
+          SITUACAO: ${{ (needs.build.result == 'cancelled' || needs.deploy.result == 'cancelled') && 'cancelado' || 'falhou' }}
+          DETALHES: "build: ${{ needs.build.result }}, publicação: ${{ needs.deploy.result }}"
+        run: |
+          if [ -z "$CMS_URL" ] || [ -z "$CMS_DEPLOY_SEGREDO" ]; then echo "Aviso ao CMS não configurado; seguindo sem ele."; exit 0; fi
+          corpo=$(jq -n --argjson run "$GITHUB_RUN_ID" --arg s "$SITUACAO" --arg d "$DETALHES" \
+            '{etapa: $s, run_id: $run, detalhes: $d}')
+          curl -fsS --max-time 20 --retry 2 -X POST "$CMS_URL/functions/v1/confirmar-deploy" \
+            -H "Content-Type: application/json" -H "x-cms-segredo: $CMS_DEPLOY_SEGREDO" -d "$corpo" \
+            || echo "::warning::Não foi possível avisar o CMS da falha."

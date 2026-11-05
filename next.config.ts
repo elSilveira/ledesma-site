@@ -1,4 +1,14 @@
 import type { NextConfig } from "next";
+import { variaveisPublicasComSegredo } from "./src/lib/supabase/chaves";
+
+// Variáveis NEXT_PUBLIC_ vão para o navegador: o build para se alguma contiver chave secreta ou token
+const vazamentos = variaveisPublicasComSegredo(process.env);
+if (vazamentos.length > 0) {
+  throw new Error(
+    `Segredo em variável pública, que seria enviado ao navegador: ${vazamentos.join("; ")}. ` +
+      "Use apenas a chave publishable/anon do Supabase (veja supabase/README.md).",
+  );
+}
 
 /** Build estático para o GitHub Pages (ver .github/workflows/pages.yml). */
 const exportEstatico = process.env.GITHUB_PAGES === "true";

@@ -8,9 +8,16 @@
     "start": "next start",
     "lint": "eslint",
     "pendencias": "node --no-warnings scripts/pendencias.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "supabase:verificar": "node --no-warnings scripts/verificar-supabase.mjs",
+    "admin:mfa": "node --no-warnings scripts/admin-mfa.mjs",
+    "sincronizar": "node --experimental-strip-types --no-warnings scripts/sincronizar-artigos.mjs",
+    "prebuild": "npm run -s sincronizar",
+    "predev": "node --experimental-strip-types --no-warnings scripts/sincronizar-artigos.mjs --tolerante",
+    "pretypecheck": "npm run -s sincronizar -- --tolerante"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.119.0",
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0"

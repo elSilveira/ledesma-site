@@ -40,3 +40,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# artigos sincronizados do CMS antes de cada build (gerados; a fonte é o Supabase)
+/src/content/artigos-cms.json
+/.cms/
+
+# estado local do CLI do Supabase (projeto vinculado, versões)
+/supabase/.temp/
+/supabase/.branches/

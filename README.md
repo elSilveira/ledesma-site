@@ -7,7 +7,8 @@ Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS 4. Sem d
 ```bash
 npm install
 npm run dev          # desenvolvimento: http://localhost:3000 (mostra os marcadores "Pendente: …")
-npm run build        # build de produção
+npm run build        # build de produção (sincroniza os artigos do CMS antes)
+npm run sincronizar  # só baixa e valida os artigos publicados no CMS
 npm start            # servir o build
 npm run lint
 npm run typecheck    # requer tipos de rota gerados (rode `npx next typegen` ou um build antes)
@@ -20,11 +21,12 @@ npm run pendencias   # lista o que falta preencher antes da publicação
 | --- | --- |
 | Dados do escritório, sedes, equipe, telefones, redes, público trabalhista | `src/config/site.ts` |
 | Textos das áreas de atuação | `src/content/areas.ts` |
-| Artigos (basta adicionar um objeto; página, sitemap e links internos são gerados) | `src/content/articles.ts` |
+| Artigos: criar, editar, publicar e retirar | Painel `/admin` (CMS no Supabase). O build lê os publicados por `scripts/sincronizar-artigos.mjs` |
 | Avaliações do Google exibidas em /contato (copiadas literalmente, sem editar o texto) | `src/content/avaliacoes.ts` |
 | Fontes de notícias (RSS): nome, tipo, local de referência, URL do feed | `src/config/noticias.ts` |
 | Leitura dos feeds, classificação por área/tribunal/região | `src/lib/noticias.ts` |
 | Cores e tipografia | `src/app/globals.css` (bloco `@theme`) |
+| CMS de artigos: banco, permissões e configuração | `supabase/` (veja `supabase/README.md`) |
 
 Campos `null` em `site.ts` são **pendentes**: não aparecem no site publicado. Em desenvolvimento aparecem como marcadores tracejados.
 
@@ -34,7 +36,7 @@ Campos `null` em `site.ts` são **pendentes**: não aparecem no site publicado. 
    Sem ele, o site gera `robots.txt` bloqueando tudo e metatag `noindex`.
 2. Rode `npm run pendencias` e preencha os itens.
 3. Defina `publicoTrabalhista` em `site.ts` (`"trabalhadores"`, `"empresas"` ou `"ambos"`): os blocos correspondentes aparecem automaticamente.
-4. Peça a cada advogado que revise os artigos da sua área e preencha `revisadoPor` com o slug (`"amanda"`, `"gustavo"`, `"erminio"`).
+4. Os artigos são escritos e assinados pelos advogados no painel `/admin`; só os publicados lá entram no site.
 5. Google Search Console: crie a propriedade do domínio, copie o código da tag HTML para `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`, publique e envie `/sitemap.xml`.
 
 ## Imagens
