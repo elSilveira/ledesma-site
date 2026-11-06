@@ -95,6 +95,9 @@ jobs:
           NEXT_PUBLIC_ALLOW_INDEXING: "false"
           # Variável do repositório (Settings > Secrets and variables > Actions > Variables)
           NEXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.CF_ANALYTICS_TOKEN }}
+          # Painel /admin: só a URL e a chave pública (publishable). Nunca segredos aqui.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
 
       - run: node scripts/pages-segmentos.mjs out
 
