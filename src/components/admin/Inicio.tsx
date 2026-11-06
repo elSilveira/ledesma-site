@@ -5,7 +5,7 @@ import { getArea } from "@/content/areas";
 import { supabaseNavegador } from "@/lib/supabase/cliente";
 import { buttonClasses } from "../Button";
 import { Icon } from "../icons";
-import { excluir, type LinhaArtigo, noSite, podeEditar, podeExcluir, type Status, statusCms } from "./artigos";
+import { COLUNAS, excluir, formularioDe, type LinhaArtigo, noSite, podeEditar, podeExcluir, salvar, type Status, statusCms, validar } from "./artigos";
 import { EditorArtigo } from "./EditorArtigo";
 import type { Perfil } from "./sessao";
 
@@ -88,6 +88,43 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
   const [excluindo, setExcluindo] = useState<Resumo | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
+
+  // Publicação direto da lista (rascunhos), com a mesma confirmação da OAB do editor
+  const janelaPublicar = useRef<HTMLDialogElement>(null);
+  const [publicando, setPublicando] = useState<LinhaArtigo | null>(null);
+  const [conformidade, setConformidade] = useState(false);
+
+  async function pedirPublicacao(a: Resumo) {
+    setAviso(null);
+    setOcupado(true);
+    const { data, error } = await supabaseNavegador().from("artigos").select(COLUNAS).eq("id", a.id).single();
+    setOcupado(false);
+    if (error || !data) {
+      setAviso({ tipo: "erro", texto: "Não foi possível abrir o artigo. Verifique a conexão e tente de novo." });
+      return;
+    }
+    const linha = data as LinhaArtigo;
+    const faltas = validar(formularioDe(linha), true);
+    if (faltas.length) {
+      const lista = faltas.slice(0, 3).map((f) => `${f.campo}: ${f.mensagem}`).join("; ");
+      setAviso({ tipo: "erro", texto: `“${linha.titulo}” ainda não pode ser publicado (${lista}${faltas.length > 3 ? "…" : ""}). Clique em Editar para completar.` });
+      return;
+    }
+    setPublicando(linha);
+    setConformidade(false);
+    janelaPublicar.current?.showModal();
+  }
+
+  async function confirmarPublicacao() {
+    if (!publicando) return;
+    setOcupado(true);
+    const r = await salvar(supabaseNavegador(), { atual: publicando, form: formularioDe(publicando), status: "publicado", confirmouConformidade: true });
+    setOcupado(false);
+    janelaPublicar.current?.close();
+    setAviso(r.erro ? { tipo: "erro", texto: r.erro } : { tipo: "ok", texto: `“${publicando.titulo}” foi publicado. O site é atualizado sozinho em alguns minutos.` });
+    setPublicando(null);
+    if (!r.erro) setRecarga((n) => n + 1);
+  }
 
   function pedirExclusao(a: Resumo) {
     setExcluindo(a);
@@ -306,6 +343,20 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
                       </span>
                     </span>
                   </button>
+                  {/* Publicar: só rascunhos de quem pode editar; abre junto com o "Editar" */}
+                  {a.status === "rascunho" && podeEditar(a, perfil) && (
+                    <span className="flex items-center overflow-hidden pb-4 md:self-stretch transition-all duration-300 ease-out md:max-w-0 md:pb-0 md:opacity-0 md:group-hover/linha:max-w-32 md:group-hover/linha:opacity-100 md:group-focus-within/linha:max-w-32 md:group-focus-within/linha:opacity-100">
+                      <button
+                        type="button"
+                        disabled={ocupado}
+                        onClick={() => void pedirPublicacao(a)}
+                        aria-label={`Publicar “${a.titulo}”`}
+                        className={`${pilula} ml-2 border-gold bg-gold text-coal transition-colors hover:bg-gold/85 disabled:opacity-60`}
+                      >
+                        Publicar
+                      </button>
+                    </span>
+                  )}
                   {/* Lixeira: abre junto com o "Editar"; só para quem pode excluir (regras do banco) */}
                   {podeExcluir(a, perfil) && (
                     <span className="flex items-center overflow-hidden pb-4 md:self-stretch transition-all duration-300 ease-out md:max-w-0 md:pb-0 md:opacity-0 md:group-hover/linha:max-w-32 md:group-hover/linha:opacity-100 md:group-focus-within/linha:max-w-32 md:group-focus-within/linha:opacity-100">
@@ -336,6 +387,39 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
           {aviso.texto}
         </p>
       )}
+
+      {/* Confirmação de publicação pela lista (regras de publicidade da OAB) */}
+      <dialog
+        ref={janelaPublicar}
+        aria-labelledby={`${uid}-publicar`}
+        onClick={(e) => e.target === e.currentTarget && janelaPublicar.current?.close()}
+        onClose={() => setPublicando(null)}
+        className="m-auto w-[min(100%-2rem,32rem)] border border-gold/20 bg-coal p-0 text-paper shadow-2xl backdrop:bg-black/75 backdrop:backdrop-blur-sm"
+      >
+        {publicando && (
+          <div className="p-6 md:p-8">
+            <h2 id={`${uid}-publicar`} className="text-2xl">
+              Publicar o artigo?
+            </h2>
+            <p className="mt-4 font-serif text-lg text-ivory">“{publicando.titulo}”</p>
+            <label className="mt-5 flex items-start gap-3 text-sm text-paper">
+              <input type="checkbox" checked={conformidade} onChange={(e) => setConformidade(e.target.checked)} className="mt-1 size-4 shrink-0 accent-[var(--color-gold)]" />
+              <span>
+                Revisei o texto: ele é informativo, não promete resultado e segue as regras de publicidade da advocacia (Provimento OAB nº 205/2021).
+              </span>
+            </label>
+            <p className="mt-4 text-xs text-muted">Depois de confirmar, o site é atualizado sozinho em alguns minutos.</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button type="button" disabled={!conformidade || ocupado} onClick={() => void confirmarPublicacao()} className={buttonClasses("primary")}>
+                {ocupado ? "Publicando…" : "Publicar"}
+              </button>
+              <button type="button" onClick={() => janelaPublicar.current?.close()} className={buttonClasses("ghost")}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
 
       {/* Confirmação de exclusão */}
       <dialog

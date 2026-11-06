@@ -1,7 +1,7 @@
 "use client";
 
 import { type FormEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
-import { supabaseNavegador } from "@/lib/supabase/cliente";
+import { DIAS_LEMBRAR, lembrarEsteComputador, supabaseNavegador } from "@/lib/supabase/cliente";
 import { buttonClasses } from "../Button";
 import { Icon } from "../icons";
 import { traduzirErro } from "./sessao";
@@ -130,6 +130,7 @@ export function TelaVerificarMfa({ factorId, aoConcluir, aoSair }: { factorId: s
   const [codigo, setCodigo] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [lembrar, setLembrar] = useState(false);
 
   async function enviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -142,6 +143,7 @@ export function TelaVerificarMfa({ factorId, aoConcluir, aoSair }: { factorId: s
       setEnviando(false);
       return;
     }
+    if (lembrar) lembrarEsteComputador();
     await aoConcluir();
   }
 
@@ -150,6 +152,13 @@ export function TelaVerificarMfa({ factorId, aoConcluir, aoSair }: { factorId: s
       <p className="mt-3 text-sm text-muted">Abra o aplicativo autenticador e digite o código atual de “Ledesma Advocacia CMS”.</p>
       <form onSubmit={enviar}>
         <CampoCodigo id={`${uid}-codigo`} valor={codigo} aoMudar={setCodigo} />
+        <label className="mt-5 flex items-start gap-3 text-sm text-paper">
+          <input type="checkbox" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} className="mt-0.5 size-4 shrink-0 accent-[var(--color-gold)]" />
+          <span>
+            Lembrar este computador por {DIAS_LEMBRAR} dias
+            <span className="mt-0.5 block text-xs text-muted">Você continua conectado mesmo fechando o navegador. Não use em computador compartilhado.</span>
+          </span>
+        </label>
         <Erro texto={erro} />
         <button type="submit" disabled={enviando || codigo.length !== 6} className={`${buttonClasses("primary")} mt-6 w-full`}>
           {enviando ? "Confirmando…" : "Confirmar"}

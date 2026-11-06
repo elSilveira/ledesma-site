@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useCallback, useEffect, useState } from "react";
-import { supabaseConfigurado, supabaseNavegador } from "@/lib/supabase/cliente";
+import { esquecerEsteComputador, supabaseConfigurado, supabaseNavegador } from "@/lib/supabase/cliente";
 import { TelaInicio } from "./Inicio";
 import { avaliarSessao, type Etapa, type Perfil } from "./sessao";
 import { Cartao, TelaCadastrarMfa, TelaLogin, TelaSemAutorizacao, TelaVerificarMfa } from "./telas";
@@ -41,6 +41,7 @@ export function PainelAdmin({ conteudo }: { conteudo?: (perfil: Perfil, sair: ()
 
   const sair = useCallback(async () => {
     await supabaseNavegador().auth.signOut({ scope: "local" });
+    esquecerEsteComputador();
     setEtapa({ tipo: "login" });
   }, []);
 
