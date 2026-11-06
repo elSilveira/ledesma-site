@@ -28,9 +28,14 @@ const etiqueta = "inline-flex h-6 items-center border px-2 text-[0.62rem] font-s
 const dataCurta = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
 /** Chama a Edge Function e devolve a mensagem (de sucesso ou de erro) em português. */
-async function chamarFuncao(corpo: Record<string, unknown>): Promise<{ ok: boolean; texto: string }> {
+type Resultado = { ok: boolean; texto: string; senha?: { email: string; senha: string } };
+
+async function chamarFuncao(corpo: Record<string, unknown>): Promise<Resultado> {
   const { data, error } = await supabaseNavegador().functions.invoke("gerenciar-usuarios", { body: corpo });
-  if (!error) return { ok: true, texto: (data as { mensagem?: string })?.mensagem ?? "Pronto." };
+  if (!error) {
+    const d = data as { mensagem?: string; email?: string; senha_temporaria?: string };
+    return { ok: true, texto: d?.mensagem ?? "Pronto.", senha: d?.senha_temporaria && d.email ? { email: d.email, senha: d.senha_temporaria } : undefined };
+  }
   if (error instanceof FunctionsHttpError) {
     try {
       const r = (await error.context.json()) as { erro?: string };
@@ -44,9 +49,9 @@ async function chamarFuncao(corpo: Record<string, unknown>): Promise<{ ok: boole
 
 const textoAcao = {
   nova_senha: {
-    titulo: "Enviar nova senha temporária?",
-    texto: "A senha atual deixa de valer. A pessoa recebe uma senha temporária por e-mail e cria outra no próximo acesso.",
-    botao: "Enviar senha",
+    titulo: "Gerar nova senha temporária?",
+    texto: "A senha atual deixa de valer. Uma senha temporária é gerada e a pessoa cria outra no próximo acesso.",
+    botao: "Gerar senha",
   },
   zerar_mfa: {
     titulo: "Remover a verificação em duas etapas?",
@@ -73,6 +78,27 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
   const [aviso, setAviso] = useState<Aviso>(null);
   const [acao, setAcao] = useState<Acao | null>(null);
   const [ocupado, setOcupado] = useState(false);
+  // Sem e-mail configurado: a senha temporária aparece uma única vez, só nesta janela
+  const janelaSenha = useRef<HTMLDialogElement>(null);
+  const [senha, setSenha] = useState<{ email: string; senha: string } | null>(null);
+  const [copiado, setCopiado] = useState(false);
+
+  function mostrarSenha(s: { email: string; senha: string } | undefined) {
+    if (!s) return;
+    setSenha(s);
+    setCopiado(false);
+    janelaSenha.current?.showModal();
+  }
+
+  async function copiar() {
+    if (!senha) return;
+    try {
+      await navigator.clipboard.writeText(senha.senha);
+      setCopiado(true);
+    } catch {
+      setCopiado(false);
+    }
+  }
 
   // Formulário de cadastro
   const [email, setEmail] = useState("");
@@ -108,6 +134,7 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
     const r = await chamarFuncao({ acao: "criar", email: email.trim(), papel, integrante: integrante || null });
     setOcupado(false);
     setAviso({ tipo: r.ok ? "ok" : "erro", texto: r.texto });
+    mostrarSenha(r.senha);
     if (r.ok) {
       setEmail("");
       setIntegrante("");
@@ -126,7 +153,7 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
     if (!acao) return;
     setOcupado(true);
     const { tipo, usuario } = acao;
-    let r: { ok: boolean; texto: string };
+    let r: Resultado;
     if (tipo === "desativar" || tipo === "reativar") {
       const { error } = await supabaseNavegador().rpc("autorizar_usuario", {
         p_email: usuario.email,
@@ -144,6 +171,7 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
     janela.current?.close();
     setAcao(null);
     setAviso({ tipo: r.ok ? "ok" : "erro", texto: r.texto });
+    mostrarSenha(r.senha);
     if (r.ok) setRecarga((n) => n + 1);
   }
 
@@ -157,7 +185,7 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
           <h2 ref={titulo} tabIndex={-1} className="mt-4 text-3xl focus:outline-none md:text-4xl">
             Usuários
           </h2>
-          <p className="mt-2 text-sm text-muted">Quem pode entrar no painel. Contas novas recebem uma senha temporária por e-mail.</p>
+          <p className="mt-2 text-sm text-muted">Quem pode entrar no painel. Contas novas recebem uma senha temporária para o primeiro acesso.</p>
         </div>
       </div>
 
@@ -258,7 +286,7 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
                       {u.ativo && (
                         <>
                           <button type="button" onClick={() => pedir("nova_senha", u)} className="text-gold hover:text-ivory">
-                            Enviar nova senha
+                            Gerar nova senha
                           </button>
                           {u.tem_mfa && (
                             <button type="button" onClick={() => pedir("zerar_mfa", u)} className="text-gold hover:text-ivory">
@@ -278,6 +306,36 @@ export function TelaUsuarios({ perfil, aoVoltar }: { perfil: Perfil; aoVoltar: (
           </ul>
         )}
       </section>
+
+      {/* Senha temporária: mostrada uma única vez (fechou, não aparece de novo) */}
+      <dialog
+        ref={janelaSenha}
+        aria-labelledby={`${uid}-senha`}
+        onClose={() => setSenha(null)}
+        className="m-auto w-[min(100%-2rem,32rem)] border border-gold/30 bg-coal p-0 text-paper shadow-2xl backdrop:bg-black/75 backdrop:backdrop-blur-sm"
+      >
+        {senha && (
+          <div className="p-6 md:p-8">
+            <h2 id={`${uid}-senha`} className="text-2xl">
+              Senha temporária
+            </h2>
+            <p className="mt-3 text-sm text-paper">
+              Para <span className="text-ivory">{senha.email}</span>. Ela aparece <strong className="text-ivory">só agora</strong>: copie e envie à pessoa por
+              uma conversa direta, junto com o endereço do painel.
+            </p>
+            <p className="mt-5 select-all break-all border border-white/10 bg-ink/60 px-4 py-3 text-center font-mono text-xl tracking-wider text-ivory">{senha.senha}</p>
+            <p className="mt-3 text-xs text-muted">No primeiro acesso ela cria a própria senha e cadastra a verificação em duas etapas. Se perder, use “Gerar nova senha”.</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button type="button" onClick={() => void copiar()} className={buttonClasses("primary")}>
+                {copiado ? "Copiada" : "Copiar senha"}
+              </button>
+              <button type="button" onClick={() => janelaSenha.current?.close()} className={buttonClasses("ghost")}>
+                Já copiei, fechar
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
 
       <dialog
         ref={janela}

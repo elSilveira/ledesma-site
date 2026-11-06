@@ -9,6 +9,8 @@
 //   zerar_mfa   { user_id }                                          remove o MFA (celular perdido); cadastra de novo no próximo acesso
 // Ninguém age sobre a própria conta. Ativar/desativar e trocar o papel usam public.autorizar_usuario (RLS).
 //
+// Sem RESEND_API_KEY/EMAIL_REMETENTE, a senha temporária volta uma única vez para o admin que cadastrou (para entregar
+// pessoalmente); com eles, vai só por e-mail e nunca passa pelo navegador.
 // Segredos: RESEND_API_KEY, EMAIL_REMETENTE (ex.: "Ledesma Advocacia <nao-responda@seudominio.com.br>"),
 //           PAINEL_URL (opcional; padrão: https://elsilveira.github.io/ledesma-site/admin/).
 // SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY são fornecidos pelo próprio Supabase.
@@ -23,7 +25,7 @@ const CORS = {
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-const resposta = (status: number, corpo: Json) => new Response(JSON.stringify(corpo), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+const resposta = (status: number, corpo: Json) => new Response(JSON.stringify(corpo), { status, headers: { ...CORS, "Content-Type": "application/json", "Cache-Control": "no-store" } });
 
 class Recusa extends Error {
   status: number;
@@ -134,7 +136,7 @@ export async function tratar(req: Request, env: Ambiente, buscar: typeof fetch =
   const enviarEmail = async (para: string, nome: string | null, senha: string, nova: boolean) => {
     const chave = env("RESEND_API_KEY");
     const remetente = env("EMAIL_REMETENTE");
-    if (!chave || !remetente) throw new Recusa("o envio de e-mail ainda não foi configurado (RESEND_API_KEY e EMAIL_REMETENTE)", 500);
+    if (!chave || !remetente) return false;
     const m = email({ nome, email: para, senha, painel: env("PAINEL_URL") ?? PAINEL_PADRAO, nova });
     const r = await buscar("https://api.resend.com/emails", {
       method: "POST",
@@ -145,6 +147,7 @@ export async function tratar(req: Request, env: Ambiente, buscar: typeof fetch =
       console.error(`gerenciar-usuarios: Resend respondeu ${r.status}: ${(await r.text()).slice(0, 300)}`);
       throw new Recusa(`não foi possível enviar o e-mail (${r.status}). Confira o domínio verificado no Resend e o EMAIL_REMETENTE.`, 502);
     }
+    return true;
   };
 
   const perfilDe = async (userId: string) => {
@@ -199,13 +202,15 @@ export async function tratar(req: Request, env: Ambiente, buscar: typeof fetch =
           await desfazer();
           throw new Recusa("não foi possível autorizar a conta no CMS", 502);
         }
+        let enviado: boolean;
         try {
-          await enviarEmail(endereco, nome, senha, false);
+          enviado = await enviarEmail(endereco, nome, senha, false);
         } catch (e) {
-          // Sem e-mail, ninguém conhece a senha: desfaz para poder cadastrar de novo
+          // O envio falhou: ninguém conhece a senha; desfaz para poder cadastrar de novo
           await desfazer();
           throw e;
         }
+        if (!enviado) return resposta(200, { ok: true, user_id: id, email: endereco, senha_temporaria: senha, mensagem: `Conta criada para ${endereco}.` });
         return resposta(200, { ok: true, user_id: id, mensagem: `Conta criada. A senha temporária foi enviada para ${endereco}.` });
       }
 
@@ -220,7 +225,8 @@ export async function tratar(req: Request, env: Ambiente, buscar: typeof fetch =
         const r = await servidor(`/auth/v1/admin/users/${id}`, { method: "PUT", body: JSON.stringify({ password: senha }) });
         if (!r.ok) throw new Recusa(`não foi possível trocar a senha (${r.status})`, 502);
         await servidor(`/rest/v1/perfis?user_id=eq.${id}`, { method: "PATCH", body: JSON.stringify({ trocar_senha: true }), headers: { Prefer: "return=minimal" } });
-        await enviarEmail(endereco, await nomeDe(perfil.integrante), senha, true);
+        if (!(await enviarEmail(endereco, await nomeDe(perfil.integrante), senha, true)))
+          return resposta(200, { ok: true, email: endereco, senha_temporaria: senha, mensagem: `Nova senha temporária gerada para ${endereco}.` });
         return resposta(200, { ok: true, mensagem: `Nova senha temporária enviada para ${endereco}.` });
       }
 
