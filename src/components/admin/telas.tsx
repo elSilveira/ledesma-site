@@ -108,7 +108,7 @@ export function TelaLogin({ aoEntrar }: { aoEntrar: () => Promise<void> }) {
           {enviando ? "Entrando…" : "Entrar"}
         </button>
       </form>
-      <p className="mt-6 text-xs text-muted">Esqueceu a senha? Fale com o administrador do site.</p>
+      <p className="mt-6 text-xs text-muted">Esqueceu a senha? Peça ao administrador do site uma senha temporária nova.</p>
     </Cartao>
   );
 }
@@ -169,9 +169,73 @@ export function TelaVerificarMfa({ factorId, aoConcluir, aoSair }: { factorId: s
   );
 }
 
+/** Primeiro acesso (ou senha temporária reenviada): a pessoa define a própria senha. */
+export function TelaTrocarSenha({ email, aoConcluir, aoSair }: { email: string; aoConcluir: () => Promise<void>; aoSair: () => void }) {
+  const uid = useId();
+  const [senha, setSenha] = useState("");
+  const [repetir, setRepetir] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const problema =
+    senha.length > 0 && senha.length < 10
+      ? "Use pelo menos 10 caracteres."
+      : repetir.length > 0 && senha !== repetir
+        ? "As duas senhas não são iguais."
+        : null;
+
+  async function enviar(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (problema || senha.length < 10) return;
+    setErro(null);
+    setEnviando(true);
+    const supabase = supabaseNavegador();
+    const { error } = await supabase.auth.updateUser({ password: senha });
+    if (error) {
+      setErro(traduzirErro(error, "senha"));
+      setEnviando(false);
+      return;
+    }
+    await supabase.rpc("concluir_troca_senha");
+    setSenha("");
+    setRepetir("");
+    await aoConcluir();
+  }
+
+  return (
+    <Cartao eyebrow="Primeiro acesso" titulo="Crie a sua senha">
+      <p className="mt-3 text-sm text-muted">
+        Você entrou com uma senha temporária. Defina agora uma senha só sua para <span className="text-paper">{email}</span>; a temporária deixa de valer.
+      </p>
+      <form onSubmit={enviar} className="mt-6 space-y-5">
+        {/* Campo oculto com o e-mail: ajuda o gerenciador de senhas a salvar a senha nova na conta certa */}
+        <input type="email" name="email" autoComplete="username" value={email} readOnly hidden />
+        <div>
+          <label htmlFor={`${uid}-nova`} className="text-sm text-paper">
+            Senha nova (mínimo 10 caracteres)
+          </label>
+          <input id={`${uid}-nova`} type="password" autoComplete="new-password" required minLength={10} value={senha} onChange={(e) => setSenha(e.target.value)} className={campo} />
+        </div>
+        <div>
+          <label htmlFor={`${uid}-repetir`} className="text-sm text-paper">
+            Repita a senha nova
+          </label>
+          <input id={`${uid}-repetir`} type="password" autoComplete="new-password" required value={repetir} onChange={(e) => setRepetir(e.target.value)} className={campo} />
+        </div>
+        {problema && <p className="text-sm text-wine-text">{problema}</p>}
+        <Erro texto={erro} />
+        <button type="submit" disabled={enviando || !!problema || senha.length < 10 || senha !== repetir} className={`${buttonClasses("primary")} w-full`}>
+          {enviando ? "Salvando…" : "Salvar senha e continuar"}
+        </button>
+      </form>
+      <p className="mt-5 text-xs text-muted">Em seguida você cadastra a verificação em duas etapas no celular.</p>
+      <BotaoSair aoSair={aoSair} />
+    </Cartao>
+  );
+}
+
 type Cadastro = { factorId: string; qr: string; chave: string };
 
-/** Cadastro do MFA por aplicativo (TOTP). Obrigatório para admin; opcional para advogado. */
+/** Cadastro do MFA por aplicativo (TOTP). Obrigatório para todas as contas. */
 export function TelaCadastrarMfa({
   obrigatorio,
   aoConcluir,
@@ -231,7 +295,7 @@ export function TelaCadastrarMfa({
     <Cartao eyebrow="Verificação em duas etapas" titulo="Cadastrar o aplicativo autenticador" largo>
       <p className="mt-3 text-sm text-muted">
         {obrigatorio
-          ? "Contas de administrador precisam da verificação em duas etapas. Sem ela, o painel não libera nenhum dado."
+          ? "Todas as contas do painel usam a verificação em duas etapas: além da senha, um código do celular. Leva um minuto."
           : "Opcional, mas recomendado: protege a conta mesmo se a senha vazar."}
       </p>
 

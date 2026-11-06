@@ -7,6 +7,7 @@ import { buttonClasses } from "../Button";
 import { Icon } from "../icons";
 import { COLUNAS, excluir, formularioDe, type LinhaArtigo, noSite, podeEditar, podeExcluir, salvar, type Status, statusCms, validar } from "./artigos";
 import { EditorArtigo } from "./EditorArtigo";
+import { TelaUsuarios } from "./Usuarios";
 import type { Perfil } from "./sessao";
 
 type Resumo = Pick<LinhaArtigo, "id" | "slug" | "titulo" | "resumo" | "area" | "status" | "revisao" | "revisao_no_ar" | "modificado_em" | "assinantes" | "criado_por">;
@@ -78,6 +79,7 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
   const [recarga, setRecarga] = useState(0);
   const [ciclo, setCiclo] = useState(0);
   const [editando, setEditando] = useState<string | "novo" | null>(null);
+  const [usuarios, setUsuarios] = useState(false);
   const [busca, setBusca] = useState("");
   // Advogado começa vendo os próprios artigos; admin (sem assinatura) vê todos
   const [meus, setMeus] = useState(Boolean(perfil.integrante));
@@ -190,6 +192,8 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
     return () => clearInterval(id);
   }, [aguardando, editando]);
 
+  if (usuarios) return <TelaUsuarios perfil={perfil} aoVoltar={() => setUsuarios(false)} />;
+
   if (editando) {
     return (
       <EditorArtigo
@@ -236,6 +240,11 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
           <button type="button" onClick={() => setEditando("novo")} className={buttonClasses("primary")}>
             + Escrever novo artigo
           </button>
+          {perfil.papel === "admin" && (
+            <button type="button" onClick={() => setUsuarios(true)} className={buttonClasses("outline")}>
+              Usuários
+            </button>
+          )}
           <button type="button" onClick={aoSair} className={buttonClasses("ghost")}>
             Sair
           </button>

@@ -4,7 +4,7 @@ import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { esquecerEsteComputador, supabaseConfigurado, supabaseNavegador } from "@/lib/supabase/cliente";
 import { TelaInicio } from "./Inicio";
 import { avaliarSessao, type Etapa, type Perfil } from "./sessao";
-import { Cartao, TelaCadastrarMfa, TelaLogin, TelaSemAutorizacao, TelaVerificarMfa } from "./telas";
+import { Cartao, TelaCadastrarMfa, TelaLogin, TelaSemAutorizacao, TelaTrocarSenha, TelaVerificarMfa } from "./telas";
 
 /**
  * Painel do CMS (/admin). Roda inteiro no navegador, compatível com o export estático do GitHub Pages.
@@ -68,6 +68,8 @@ export function PainelAdmin({ conteudo }: { conteudo?: (perfil: Perfil, sair: ()
       return <TelaSemAutorizacao email={etapa.email} aoSair={sair} />;
     case "verificar-mfa":
       return <TelaVerificarMfa factorId={etapa.factorId} aoConcluir={atualizar} aoSair={sair} />;
+    case "trocar-senha":
+      return <TelaTrocarSenha email={etapa.perfil.email} aoConcluir={atualizar} aoSair={sair} />;
     case "cadastrar-mfa":
       return <TelaCadastrarMfa obrigatorio={etapa.obrigatorio} aoConcluir={atualizar} aoCancelar={() => void atualizar()} aoSair={sair} />;
     case "inicio":
