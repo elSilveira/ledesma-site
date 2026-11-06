@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { supabaseConfigurado, supabaseNavegador } from "@/lib/supabase/cliente";
 import { TelaInicio } from "./Inicio";
-import { avaliarSessao, type Etapa } from "./sessao";
+import { avaliarSessao, type Etapa, type Perfil } from "./sessao";
 import { Cartao, TelaCadastrarMfa, TelaLogin, TelaSemAutorizacao, TelaVerificarMfa } from "./telas";
 
 /**
  * Painel do CMS (/admin). Roda inteiro no navegador, compatível com o export estático do GitHub Pages.
  * As telas só organizam o acesso: quem pode ler ou alterar cada dado é decidido pelo banco (RLS e MFA).
  */
-export function PainelAdmin() {
+export function PainelAdmin({ conteudo }: { conteudo?: (perfil: Perfil, sair: () => void) => ReactNode } = {}) {
   const [etapa, setEtapa] = useState<Etapa>({ tipo: "carregando" });
 
   const atualizar = useCallback(async () => {
@@ -70,6 +70,7 @@ export function PainelAdmin() {
     case "cadastrar-mfa":
       return <TelaCadastrarMfa obrigatorio={etapa.obrigatorio} aoConcluir={atualizar} aoCancelar={() => void atualizar()} aoSair={sair} />;
     case "inicio":
+      if (conteudo) return conteudo(etapa.perfil, sair);
       return (
         <TelaInicio
           perfil={etapa.perfil}
