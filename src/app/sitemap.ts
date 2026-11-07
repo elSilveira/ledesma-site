@@ -5,6 +5,9 @@ import { fontesNoticias, noticiasHref } from "@/config/noticias";
 import { advogadoHref, equipe } from "@/config/site";
 import { absoluteUrl } from "@/lib/seo";
 
+// Gerado no build (também no export estático do GitHub Pages)
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const paginas: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "monthly", priority: 1 },

@@ -26,7 +26,7 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Ledesma Advocacia | Advogados em Toledo – PR",
+    default: "Ledesma Advocacia | Advogados em Toledo (PR) e Iguatemi (MS)",
     template: "%s | Ledesma Advocacia",
   },
   description: site.descricao,

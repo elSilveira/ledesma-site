@@ -14,13 +14,13 @@ import { areas } from "@/content/areas";
 import { artigosOrdenados } from "@/content/articles";
 import { pageMetadata } from "@/lib/seo";
 
-const homeTitle = "Ledesma Advocacia | Advogados em Toledo – PR";
+const homeTitle = "Ledesma Advocacia | Advogados em Toledo (PR) e Iguatemi (MS)";
 
 export const metadata = {
   ...pageMetadata({
   title: homeTitle,
   description:
-    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS). Atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial e a distância.",
+    "Escritório de advocacia em Toledo (PR) e Iguatemi (MS): Direito Criminal, Trabalhista, Previdenciário e de Família e Sucessões. Atendimento presencial e a distância.",
   path: "/",
   }),
   title: { absolute: homeTitle },

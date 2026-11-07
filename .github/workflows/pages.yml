@@ -79,20 +79,39 @@ jobs:
         name: Guardar o manifesto do build
         run: echo "manifesto=$(jq -c '.artigos' .cms/manifesto.json)" >> "$GITHUB_OUTPUT"
 
-      # Recursos que exigem servidor Node e não existem no export estático:
-      # proxy (404 de slugs desconhecidos, que no Pages já vêm do 404.html) e robots/sitemap
-      # (a prévia não é indexada, e robots.txt em subcaminho é ignorado pelos buscadores).
+      # O proxy exige servidor Node (404 de slugs desconhecidos, que no Pages já vêm do 404.html).
+      # robots.txt e sitemap.xml são gerados no build, como arquivos estáticos.
       - name: Remover rotas que dependem de servidor
-        run: rm src/proxy.ts src/app/robots.ts src/app/sitemap.ts
+        run: rm src/proxy.ts
+
+      # Indexação só no domínio definitivo (https, na raiz). Em qualquer outro endereço (prévia em
+      # subcaminho, outro domínio), o build sai com noindex e robots.txt bloqueando tudo.
+      - id: dominio
+        name: Endereço do site e indexação
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          DOMINIO_DEFINITIVO: ledesma.adv.br
+        run: |
+          host="${BASE_URL#*://}"; host="${host%%/*}"
+          if [ "$host" = "$DOMINIO_DEFINITIVO" ] && [ -z "$BASE_PATH" ]; then
+            echo "url=https://$DOMINIO_DEFINITIVO" >> "$GITHUB_OUTPUT"
+            echo "indexar=true" >> "$GITHUB_OUTPUT"
+            echo "Domínio definitivo: https://$DOMINIO_DEFINITIVO (indexação ligada)"
+          else
+            echo "url=https://${BASE_URL#*://}" >> "$GITHUB_OUTPUT"
+            echo "indexar=false" >> "$GITHUB_OUTPUT"
+            echo "Prévia em $BASE_URL (sem indexação)"
+          fi
 
       - name: Build estático
         run: npx next build
         env:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
-          # Prévia: mantém noindex até o domínio definitivo e os dados pendentes estarem prontos
-          NEXT_PUBLIC_ALLOW_INDEXING: "false"
+          # Sempre https (o GitHub informa o domínio próprio com http://)
+          NEXT_PUBLIC_SITE_URL: ${{ steps.dominio.outputs.url }}
+          NEXT_PUBLIC_ALLOW_INDEXING: ${{ steps.dominio.outputs.indexar }}
           # Variável do repositório (Settings > Secrets and variables > Actions > Variables)
           NEXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.CF_ANALYTICS_TOKEN }}
           # Painel /admin: só a URL e a chave pública (publishable). Nunca segredos aqui.

@@ -5,8 +5,17 @@ import { artigoHref, assinantes, type Artigo } from "@/content/articles";
 
 export const OG_IMAGE = { url: "/og/ledesma-advocacia.jpg", width: 1200, height: 630, alt: "Ledesma Advocacia" };
 
+// No export estático (GitHub Pages, trailingSlash) as páginas ficam em /caminho/: URLs absolutas de página
+// levam a barra final, iguais ao canonical, para o sitemap e os dados estruturados não apontarem para redirecionamentos
+const barraFinal = process.env.GITHUB_PAGES === "true";
+function comBarra(path: string) {
+  if (!barraFinal) return path;
+  const [, caminho, resto] = path.match(/^([^?#]*)(.*)$/)!;
+  return caminho.endsWith("/") || /\.[a-z0-9]+$/i.test(caminho) ? path : `${caminho}/${resto}`;
+}
+
 // Concatena em vez de usar new URL(): site.url pode ter subcaminho (GitHub Pages)
-export const absoluteUrl = (path = "/") => `${site.url}${path.startsWith("/") ? path : `/${path}`}`;
+export const absoluteUrl = (path = "/") => `${site.url}${comBarra(path.startsWith("/") ? path : `/${path}`)}`;
 
 /** Metadados por página: título, descrição, canonical e Open Graph coerentes entre si. */
 export function pageMetadata({
