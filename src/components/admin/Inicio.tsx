@@ -360,8 +360,9 @@ export function TelaInicio({ perfil, temMfa, aoCadastrarMfa, aoSair }: { perfil:
                         disabled={ocupado}
                         onClick={() => void pedirPublicacao(a)}
                         aria-label={`Publicar “${a.titulo}”`}
-                        className={`${pilula} ml-2 border-gold bg-gold text-coal transition-colors hover:bg-gold/85 disabled:opacity-60`}
+                        className={`${pilula} ml-2 cursor-pointer !gap-1 !px-1.5 border-gold bg-gradient-to-b from-[#e3c27a] to-gold text-coal shadow-[0_2px_0_rgba(0,0,0,0.45),0_6px_14px_-6px_rgba(201,162,90,0.7)] transition-all duration-150 hover:-translate-y-px hover:brightness-110 hover:shadow-[0_3px_0_rgba(0,0,0,0.45),0_10px_18px_-6px_rgba(201,162,90,0.85)] active:translate-y-px active:shadow-[0_0_0_rgba(0,0,0,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ivory/80 disabled:cursor-wait disabled:opacity-60`}
                       >
+                        <Icon name="seta" className="size-3 -rotate-45" />
                         Publicar
                       </button>
                     </span>

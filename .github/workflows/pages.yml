@@ -80,9 +80,12 @@ jobs:
         run: echo "manifesto=$(jq -c '.artigos' .cms/manifesto.json)" >> "$GITHUB_OUTPUT"
 
       # O proxy exige servidor Node (404 de slugs desconhecidos, que no Pages já vêm do 404.html).
-      # robots.txt e sitemap.xml são gerados no build, como arquivos estáticos.
-      - name: Remover rotas que dependem de servidor
-        run: rm src/proxy.ts
+      # robots.txt e sitemap.xml são gerados no build, como arquivos estáticos: o export exige
+      # "force-static", que o modo servidor (Cache Components) não aceita; por isso só entra aqui.
+      - name: Preparar o export estático
+        run: |
+          rm src/proxy.ts
+          sed -i "1i export const dynamic = "force-static";" src/app/robots.ts src/app/sitemap.ts
 
       # Indexação só no domínio definitivo (https, na raiz). Em qualquer outro endereço (prévia em
       # subcaminho, outro domínio), o build sai com noindex e robots.txt bloqueando tudo.
