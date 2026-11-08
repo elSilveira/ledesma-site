@@ -12,14 +12,14 @@
 // Sem RESEND_API_KEY/EMAIL_REMETENTE, a senha temporária volta uma única vez para o admin que cadastrou (para entregar
 // pessoalmente); com eles, vai só por e-mail e nunca passa pelo navegador.
 // Segredos: RESEND_API_KEY, EMAIL_REMETENTE (ex.: "Ledesma Advocacia <nao-responda@seudominio.com.br>"),
-//           PAINEL_URL (opcional; padrão: https://elsilveira.github.io/ledesma-site/admin/).
+//           PAINEL_URL (opcional; padrão: https://ledesma.adv.br/admin/).
 // SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY são fornecidos pelo próprio Supabase.
 // Publicar com --no-verify-jwt: o token é conferido abaixo, pelo próprio banco.
 
 type Ambiente = (nome: string) => string | undefined;
 type Json = Record<string, unknown>;
 
-const PAINEL_PADRAO = "https://elsilveira.github.io/ledesma-site/admin/";
+const PAINEL_PADRAO = "https://ledesma.adv.br/admin/";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",

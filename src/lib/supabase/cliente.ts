@@ -89,7 +89,7 @@ export function supabaseNavegador(): SupabaseClient {
       autoRefreshToken: true,
       detectSessionInUrl: true,
       // Padrão: sessão só na aba atual (some ao fechá-la). Com "lembrar este computador", fica no localStorage
-      // por 60 dias. Atenção: no GitHub Pages, todos os sites de elsilveira.github.io compartilham o localStorage.
+      // por 60 dias (localStorage do domínio ledesma.adv.br).
       storage: typeof window === "undefined" ? undefined : armazenamento,
       storageKey: CHAVE_SESSAO,
     },

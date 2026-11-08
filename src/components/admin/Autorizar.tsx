@@ -22,6 +22,13 @@ const PODE = [
   "publicar e retirar artigos do site, só depois da sua confirmação na conversa",
 ];
 
+/** Só o status HTTP e o código do erro do Supabase (nunca tokens): para diagnóstico na tela e no console. */
+function codigoErro(e: unknown) {
+  const x = e as { status?: number; code?: string; name?: string } | null;
+  const partes = [x?.status, x?.code ?? x?.name].filter(Boolean);
+  return partes.length ? partes.join(" · ") : "sem código";
+}
+
 /** Lado do servidor de autorização (Claude, Codex) para onde o usuário volta depois de decidir. */
 function hostDe(url: string) {
   try {
@@ -51,7 +58,11 @@ export function TelaAutorizar({ perfil, aoSair }: { perfil: Perfil; aoSair: () =
         if (error && perfil.papel === "admin") return { tipo: "erro", mensagem: "Não foi possível registrar a autorização. Tente de novo." } as Estado;
       }
       const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(id);
-      if (error || !data) return { tipo: "erro", mensagem: "Este pedido de autorização expirou ou não é válido. Comece a conexão de novo." } as Estado;
+      if (error || !data) {
+        const codigo = codigoErro(error);
+        console.warn(`Autorização OAuth: falha ao ler o pedido (${codigo})`);
+        return { tipo: "erro", mensagem: `Este pedido de autorização expirou ou não é válido. Comece a conexão de novo. (erro ${codigo})` } as Estado;
+      }
       if (!("authorization_id" in data)) {
         // Já autorizado antes: volta direto para o aplicativo
         window.location.assign(data.redirect_url);
@@ -72,7 +83,9 @@ export function TelaAutorizar({ perfil, aoSair }: { perfil: Perfil; aoSair: () =
     const supabase = supabaseNavegador();
     const { data, error } = permitir ? await supabase.auth.oauth.approveAuthorization(pedido.id) : await supabase.auth.oauth.denyAuthorization(pedido.id);
     if (error || !data?.redirect_url) {
-      setEstado({ tipo: "erro", mensagem: "Não foi possível concluir. O pedido pode ter expirado (10 minutos); comece a conexão de novo." });
+      const codigo = codigoErro(error);
+      console.warn(`Autorização OAuth: falha ao ${permitir ? "aprovar" : "recusar"} (${codigo})`);
+      setEstado({ tipo: "erro", mensagem: `Não foi possível concluir. O pedido pode ter expirado (10 minutos); comece a conexão de novo. (erro ${codigo})` });
       return;
     }
     setEstado({ tipo: "redirecionando" });

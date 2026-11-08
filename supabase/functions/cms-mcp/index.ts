@@ -15,7 +15,7 @@ type Ambiente = (nome: string) => string | undefined;
 type Json = Record<string, unknown>;
 
 const VERSOES = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
-const SITE_PADRAO = "https://elsilveira.github.io/ledesma-site";
+const SITE_PADRAO = "https://ledesma.adv.br";
 
 const AREAS: Record<string, string> = {
   "direito-criminal-e-penal": "Direito Criminal",
