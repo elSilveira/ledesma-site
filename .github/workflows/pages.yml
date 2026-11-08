@@ -85,7 +85,7 @@ jobs:
       - name: Preparar o export estático
         run: |
           rm src/proxy.ts
-          sed -i "1i export const dynamic = "force-static";" src/app/robots.ts src/app/sitemap.ts
+          sed -i '1i export const dynamic = "force-static";' src/app/robots.ts src/app/sitemap.ts
 
       # Indexação só no domínio definitivo (https, na raiz). Em qualquer outro endereço (prévia em
       # subcaminho, outro domínio), o build sai com noindex e robots.txt bloqueando tudo.
