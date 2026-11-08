@@ -73,10 +73,17 @@ export async function tratar(req: Request, env: Ambiente, buscar: typeof fetch =
       },
       body: JSON.stringify({ ref: branch, inputs: { cms_deploy_id: String(deploy) } }),
     });
-    await r.text();
+    const corpoGithub = await r.text();
 
     if (r.status !== 204 && r.status !== 200) {
-      const detalhes = `o GitHub recusou o disparo (${r.status})${r.status === 401 || r.status === 403 ? ": confira o GITHUB_TOKEN" : ""}`;
+      // Só a mensagem pública do GitHub (ex.: "Resource not accessible by personal access token"), nunca o token
+      let motivo = "";
+      try {
+        motivo = String((JSON.parse(corpoGithub) as { message?: unknown }).message ?? "").replace(/[^w .,:;()'/-]/g, "").trim().slice(0, 160);
+      } catch {
+        motivo = "";
+      }
+      const detalhes = `o GitHub recusou o disparo (${r.status}${motivo ? `: ${motivo}` : ""})${r.status === 401 || r.status === 403 ? "; confira o GITHUB_TOKEN (Actions: Read and write neste repositório)" : ""}`;
       await rpc(env, buscar, "falha_disparo", { p_deploy_id: deploy, p_detalhes: detalhes });
       console.error(`disparar-deploy: ${detalhes}`);
       return resposta(502, { disparado: false, deploy, erro: detalhes });
