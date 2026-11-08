@@ -45,6 +45,20 @@ Formato:
   ou { "tipo": "lista", "itens": [ ... ] }. Até 30 seções; textos até 2000 caracteres; itens até 1000.
 - Sem HTML e sem os sinais < >. Links só com https://. palavras_chave até 12; referencias até 20 (até 300 caracteres cada).
 
+Tamanho e estrutura padrão (medidos nos artigos já publicados; mantenha todos proporcionais):
+- Texto (subtítulos, parágrafos, listas e destaque): 220 a 420 palavras (o ideal é perto de 300). Nunca menos de 180 nem mais de 520.
+- 4 ou 5 subtítulos (3 a 6 no máximo), cada um com cerca de 50 a 90 palavras.
+- Subtítulos curtos e diretos, em forma de tema ou pergunta: "O que é…", "Quem pode pedir", "Prazo para…", "Como comprovar".
+- Parágrafos de 2 a 4 frases (até cerca de 60 palavras), citando a norma quando for o caso (ex.: "A CLT (art. 59) …").
+- 1 ou 2 listas no artigo inteiro, com 3 a 6 itens curtos (requisitos, documentos, direitos).
+- Exatamente 1 destaque ("nota"), no último subtítulo, com 1 ou 2 frases de ressalva (ex.: regras específicas,
+  cada caso deve ser avaliado por um advogado). Sem chamar para o escritório.
+- titulo: 25 a 75 caracteres, no formato "Tema: o que diz a lei" ou "Tema: quem tem direito".
+- resumo: 1 frase de 70 a 110 caracteres.
+- referencias: 2 a 5 (leis e artigos citados). palavras_chave: 4 ou 5.
+- Para ver um modelo, use ler_artigo em "horas-extras-o-que-diz-a-clt" ou "bpc-loas-quem-tem-direito".
+- Depois de criar ou editar, confira o resultado em "padrao" e ajuste até não haver avisos (ou use conferir_padrao).
+
 Fluxo:
 1. Crie sempre como rascunho (criar_rascunho) e mostre o texto completo para a pessoa.
 2. Só use publicar_artigo depois que a pessoa ler e disser, nesta conversa, que revisou o texto quanto às regras da OAB.
@@ -146,6 +160,76 @@ function conteudo(c: Json): Json {
       blocos: s.blocos.map((b) => (b.tipo === "lista" ? { tipo: "lista", itens: b.itens.map((x) => x.trim()).filter(Boolean) } : { tipo: b.tipo, texto: b.texto.trim() })),
     }));
   return d;
+}
+
+// ---------------------------------------------------------------------------
+// Padrão de tamanho e estrutura (o mesmo descrito no guia)
+// ---------------------------------------------------------------------------
+
+const PADRAO = {
+  palavras: { min: 220, max: 420, limiteMin: 180, limiteMax: 520 },
+  secoes: { min: 4, max: 5, limiteMin: 3, limiteMax: 6 },
+  palavrasSecao: { min: 35, max: 120 },
+  palavrasParagrafo: 75,
+  listas: { min: 1, max: 2 },
+  itensLista: { min: 2, max: 8 },
+  titulo: { min: 25, max: 75 },
+  resumo: { min: 70, max: 110 },
+  referencias: { min: 2, max: 5 },
+  palavrasChave: { min: 4, max: 5 },
+};
+
+const contarPalavras = (t: string) => t.split(/\s+/).filter(Boolean).length;
+
+type Medida = { palavras: number; secoes: number; listas: number; destaques: number };
+
+/** Mede o artigo e devolve avisos (fora do padrão) e bloqueios (fora dos limites, impedem publicar). */
+function conferirPadrao(x: { titulo?: unknown; resumo?: unknown; secoes?: unknown; referencias?: unknown; palavras_chave?: unknown }) {
+  const avisos: string[] = [];
+  const bloqueios: string[] = [];
+  const secoes = (Array.isArray(x.secoes) ? x.secoes : []) as Secao[];
+  let palavras = 0;
+  let listas = 0;
+  let destaques = 0;
+  secoes.forEach((sc, i) => {
+    let ps = contarPalavras(sc.titulo ?? "");
+    (sc.blocos ?? []).forEach((b) => {
+      if (b.tipo === "lista") {
+        listas++;
+        const itens = b.itens ?? [];
+        itens.forEach((it) => (ps += contarPalavras(it)));
+        if (itens.length < PADRAO.itensLista.min || itens.length > PADRAO.itensLista.max)
+          avisos.push(`Subtítulo ${i + 1}: lista com ${itens.length} itens (use ${PADRAO.itensLista.min} a ${PADRAO.itensLista.max}).`);
+      } else {
+        const n = contarPalavras(b.texto ?? "");
+        ps += n;
+        if (b.tipo === "nota") {
+          destaques++;
+          if (i !== secoes.length - 1) avisos.push(`O destaque deve ficar no último subtítulo (está no ${i + 1}).`);
+        } else if (n > PADRAO.palavrasParagrafo) avisos.push(`Subtítulo ${i + 1}: parágrafo com ${n} palavras; divida em parágrafos de 2 a 4 frases.`);
+      }
+    });
+    palavras += ps;
+    if (ps < PADRAO.palavrasSecao.min || ps > PADRAO.palavrasSecao.max)
+      avisos.push(`Subtítulo ${i + 1} ("${(sc.titulo ?? "").slice(0, 40)}"): ${ps} palavras (use ${PADRAO.palavrasSecao.min} a ${PADRAO.palavrasSecao.max}).`);
+  });
+  const faixa = (nome: string, v: number, p: { min: number; max: number }) => {
+    if (v < p.min || v > p.max) avisos.push(`${nome}: ${v} (padrão: ${p.min} a ${p.max}).`);
+  };
+  if (palavras < PADRAO.palavras.limiteMin || palavras > PADRAO.palavras.limiteMax)
+    bloqueios.push(`O texto tem ${palavras} palavras; os artigos do site têm de ${PADRAO.palavras.min} a ${PADRAO.palavras.max} (limite: ${PADRAO.palavras.limiteMin} a ${PADRAO.palavras.limiteMax}).`);
+  else faixa("Palavras no texto", palavras, PADRAO.palavras);
+  if (secoes.length < PADRAO.secoes.limiteMin || secoes.length > PADRAO.secoes.limiteMax)
+    bloqueios.push(`O texto tem ${secoes.length} subtítulos; use ${PADRAO.secoes.min} ou ${PADRAO.secoes.max} (limite: ${PADRAO.secoes.limiteMin} a ${PADRAO.secoes.limiteMax}).`);
+  else faixa("Subtítulos", secoes.length, PADRAO.secoes);
+  faixa("Listas", listas, PADRAO.listas);
+  if (destaques !== 1) avisos.push(`Destaques ("nota"): ${destaques} (padrão: exatamente 1, no último subtítulo).`);
+  if (typeof x.titulo === "string") faixa("Caracteres no título", x.titulo.trim().length, PADRAO.titulo);
+  if (typeof x.resumo === "string") faixa("Caracteres no resumo", x.resumo.trim().length, PADRAO.resumo);
+  if (Array.isArray(x.referencias)) faixa("Referências", x.referencias.length, PADRAO.referencias);
+  if (Array.isArray(x.palavras_chave)) faixa("Palavras-chave", x.palavras_chave.length, PADRAO.palavrasChave);
+  const medida: Medida = { palavras, secoes: secoes.length, listas, destaques };
+  return { medida, avisos, bloqueios, dentro_do_padrao: avisos.length === 0 && bloqueios.length === 0 };
 }
 
 // ---------------------------------------------------------------------------
@@ -335,6 +419,12 @@ const FERRAMENTAS = [
     inputSchema: { type: "object", required: ["artigo", "revisao"], properties: { artigo: ARTIGO_REF, revisao: REVISAO } },
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
   },
+  {
+    name: "conferir_padrao",
+    description: "Mede um artigo (palavras, subtítulos, listas, destaque) e compara com o padrão dos artigos do site.",
+    inputSchema: { type: "object", required: ["artigo"], properties: { artigo: ARTIGO_REF } },
+    annotations: leitura,
+  },
   { name: "situacao_do_site", description: "Mostra se há alterações esperando o site e como terminou a última atualização.", inputSchema: { type: "object", properties: {} }, annotations: leitura },
 ];
 
@@ -381,7 +471,14 @@ async function executar(nome: string, a: Json, banco: Banco, usuario: { id: stri
         d.assinantes = perfis[0]?.integrante ? [perfis[0].integrante] : [];
       }
       const r = (await banco(`artigos?select=${COLUNAS}`, { method: "POST", body: JSON.stringify({ ...d, status: "rascunho" }), prefer: "return=representation" })) as Linha[];
-      return { criado: resumoLinha(r[0], site), aviso: "Rascunho salvo; não está no site. Mostre o texto para a pessoa revisar antes de publicar." };
+      const padrao = conferirPadrao(r[0]);
+      return {
+        criado: resumoLinha(r[0], site),
+        padrao,
+        aviso: padrao.dentro_do_padrao
+          ? "Rascunho salvo; não está no site. Mostre o texto para a pessoa revisar antes de publicar."
+          : "Rascunho salvo, mas fora do padrão de tamanho dos artigos do site: ajuste com editar_artigo antes de mostrar para revisão.",
+      };
     }
 
     case "editar_artigo": {
@@ -402,7 +499,11 @@ async function executar(nome: string, a: Json, banco: Banco, usuario: { id: stri
         d.conformidade_confirmada_em = new Date().toISOString();
       }
       const r = await atualizar(banco, atual, a.revisao, d);
-      return { alterado: resumoLinha(r, site), aviso: r.status === "publicado" ? "A alteração entra no site em alguns minutos." : "Rascunho atualizado; não está no site." };
+      return {
+        alterado: resumoLinha(r, site),
+        padrao: conferirPadrao(r),
+        aviso: r.status === "publicado" ? "A alteração entra no site em alguns minutos." : "Rascunho atualizado; não está no site.",
+      };
     }
 
     case "publicar_artigo": {
@@ -412,6 +513,11 @@ async function executar(nome: string, a: Json, banco: Banco, usuario: { id: stri
       if (atual.status === "publicado") return { aviso: "O artigo já está publicado.", artigo: resumoLinha(atual, site) };
       const erros = validarCampos({ titulo: atual.titulo, slug: atual.slug, area: atual.area, resumo: atual.resumo, secoes: atual.secoes });
       if (erros.length) throw new ErroFerramenta(`O artigo ainda não pode ser publicado:\n- ${erros.join("\n- ")}`);
+      const padrao = conferirPadrao(atual);
+      if (padrao.bloqueios.length)
+        throw new ErroFerramenta(
+          `O artigo está fora do tamanho dos demais artigos do site e não pode ser publicado assim:\n- ${padrao.bloqueios.join("\n- ")}\nAjuste com editar_artigo (veja o guia_editorial).`,
+        );
       const publicadoEm = atual.publicado_em ?? hoje();
       const atualizadoEm = atual.revisao_no_ar ? hoje() : publicadoEm;
       const r = await atualizar(banco, atual, a.revisao, {
@@ -429,6 +535,11 @@ async function executar(nome: string, a: Json, banco: Banco, usuario: { id: stri
       if (atual.status !== "publicado") return { aviso: "O artigo não está publicado.", artigo: resumoLinha(atual, site) };
       const r = await atualizar(banco, atual, a.revisao, { status: "retirado" });
       return { retirado: resumoLinha(r, site), aviso: "O artigo sai do site na próxima atualização (alguns minutos). Ele continua guardado no CMS." };
+    }
+
+    case "conferir_padrao": {
+      const l = await buscarArtigo(banco, a.artigo);
+      return { artigo: l.slug, padrao: conferirPadrao(l) };
     }
 
     case "situacao_do_site": {
