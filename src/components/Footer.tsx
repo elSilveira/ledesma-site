@@ -3,6 +3,7 @@ import { enderecoLinha, equipe, formatarOAB, linkMapa, linkWhatsApp, nomeComTrat
 import { areas, areaHref } from "@/content/areas";
 import { Icon } from "./icons";
 import { Pending } from "./Pending";
+import { CookiePreferencesButton } from "./CookiePreferencesButton";
 
 const explore = [
   { href: "/o-escritorio", label: "O escritório" },
@@ -140,9 +141,12 @@ export function Footer() {
             </p>
             <p className="mt-0.5">Conteúdo de caráter exclusivamente informativo, conforme o Código de Ética e Disciplina da OAB.</p>
           </div>
-          <Link href="/politica-de-privacidade" className="shrink-0 transition-colors hover:text-gold">
-            Política de privacidade
-          </Link>
+          <div className="flex shrink-0 flex-col gap-1 md:items-end">
+            <Link href="/politica-de-privacidade" className="transition-colors hover:text-gold">
+              Política de privacidade
+            </Link>
+            <CookiePreferencesButton />
+          </div>
         </div>
       </div>
     </footer>

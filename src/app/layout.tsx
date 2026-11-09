@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat, PT_Serif } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { AnalyticsConsentManager } from "@/components/AnalyticsConsent";
 import { JsonLd } from "@/components/JsonLd";
 import { RevealObserver } from "@/components/RevealObserver";
 import { site } from "@/config/site";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <RevealObserver />
+        <AnalyticsConsentManager />
         {site.estatisticasToken && (
           // Cloudflare Web Analytics: contagem de visitas sem cookies e sem identificar o visitante
           <script

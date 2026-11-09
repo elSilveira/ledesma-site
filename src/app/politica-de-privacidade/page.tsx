@@ -43,8 +43,15 @@ export default function PrivacidadePage() {
           <h2>Sigilo</h2>
           <p>As informações recebidas são protegidas pelo sigilo profissional, nos termos do Estatuto da Advocacia (Lei nº 8.906/1994) e do Código de Ética e Disciplina da OAB.</p>
 
-          <h2>Cookies</h2>
-          <p>Este site não utiliza cookies de publicidade ou de rastreamento.</p>
+          <h2>Cookies e medição</h2>
+          <p>
+            Com a autorização do usuário, utilizamos o Google Analytics 4 para medir visualizações de páginas e artigos e cliques nos canais de contato
+            (WhatsApp, telefone e e-mail). A medição não recebe o conteúdo das mensagens, dados preenchidos no formulário, números de telefone ou endereços de e-mail.
+          </p>
+          <p>
+            O Google Analytics somente é carregado depois da aceitação. O usuário pode recusar ou alterar sua escolha a qualquer momento em
+            “Preferências de cookies”, no rodapé. Ao retirar o consentimento, os cookies de medição acessíveis por este site são removidos.
+          </p>
           {site.estatisticasToken && (
             <p>
               Para saber quantas pessoas visitam o site e quais páginas são mais acessadas, usamos o Cloudflare Web Analytics, que não utiliza cookies,

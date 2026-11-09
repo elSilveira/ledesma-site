@@ -6,6 +6,7 @@ import { type AreaSlug, advogadosDaArea, linkWhatsApp, nomeComTratamento } from 
 import { areas } from "@/content/areas";
 import { buttonClasses } from "./Button";
 import { Icon } from "./icons";
+import { trackContactClick } from "@/lib/analytics";
 
 /**
  * Formulário de contato.
@@ -93,6 +94,7 @@ export function ContactForm() {
     }
 
     // Se o navegador bloquear a nova janela, a mensagem de status oferece o link para abrir manualmente.
+    trackContactClick("whatsapp", "contact_form");
     window.open(href, "_blank", "noopener,noreferrer");
     setEnviado({ href, nome: responsavel.nomeCurto });
     setCampos(vazio);
