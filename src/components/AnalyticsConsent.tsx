@@ -8,63 +8,11 @@ import {
   type AnalyticsConsent,
   GA_MEASUREMENT_ID,
   getAnalyticsConsent,
+  initializeGtag,
+  loadGoogleTagManager,
   OPEN_COOKIE_PREFERENCES_EVENT,
   trackContactClick,
 } from "@/lib/analytics";
-
-const GA_SCRIPT_ID = "google-analytics-4";
-let analyticsLoadPromise: Promise<void> | null = null;
-let analyticsConfigured = false;
-
-function initializeGtag() {
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
-  };
-}
-
-function loadGoogleAnalytics(): Promise<void> {
-  initializeGtag();
-  window.gtag?.("consent", "update", {
-    analytics_storage: "granted",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied",
-  });
-  if (!analyticsConfigured) {
-    window.gtag?.("js", new Date());
-    // O efeito de rota envia a visualização; o page_view automático ficaria duplicado.
-    window.gtag?.("config", GA_MEASUREMENT_ID, { send_page_view: false });
-    analyticsConfigured = true;
-  }
-  if (!analyticsLoadPromise) {
-    analyticsLoadPromise = new Promise((resolve, reject) => {
-      const existing = document.getElementById(GA_SCRIPT_ID) as HTMLScriptElement | null;
-      if (existing?.dataset.loaded === "true") {
-        resolve();
-        return;
-      }
-      const script = existing || document.createElement("script");
-      const onLoad = () => {
-        script.dataset.loaded = "true";
-        resolve();
-      };
-      const onError = () => {
-        script.remove();
-        analyticsLoadPromise = null;
-        reject(new Error("Não foi possível carregar o Google Analytics."));
-      };
-      script.addEventListener("load", onLoad, { once: true });
-      script.addEventListener("error", onError, { once: true });
-      if (existing) return;
-      script.id = GA_SCRIPT_ID;
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-      document.head.appendChild(script);
-    });
-  }
-  return analyticsLoadPromise;
-}
 
 function removeGoogleAnalyticsCookies() {
   for (const cookie of document.cookie.split(";")) {
@@ -89,10 +37,10 @@ export function AnalyticsConsentManager() {
     initializeGtag();
     const saved = getAnalyticsConsent();
     if (saved === "accepted") {
-      void loadGoogleAnalytics()
+      void loadGoogleTagManager("accepted")
         .then(() => setAnalyticsReady(true))
         .catch((error) => {
-          console.error("[Analytics] Falha ao carregar o GA4.", error);
+          console.error("[Analytics] Falha ao carregar o GTM.", error);
           setAnalyticsReady(false);
         });
     }
@@ -117,13 +65,18 @@ export function AnalyticsConsentManager() {
     if (consent !== "accepted" || !analyticsReady) return;
     const pagePath = `${window.location.pathname}${window.location.search}`;
     if (lastPageRef.current === pagePath) return;
+    const previousPage = lastPageRef.current;
     lastPageRef.current = pagePath;
-    window.gtag?.("event", "page_view", {
-      send_to: GA_MEASUREMENT_ID,
-      page_title: document.title,
-      page_location: window.location.href,
-      page_path: pagePath,
-    });
+    // O GTM envia a primeira visualização. A propriedade antiga não mede
+    // mudanças de rota deste aplicativo; enviar somente as rotas seguintes.
+    if (previousPage !== null) {
+      window.gtag?.("event", "page_view", {
+        send_to: GA_MEASUREMENT_ID,
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: pagePath,
+      });
+    }
     const articleMatch = pathname.match(/\/artigos\/([^/]+)\/?$/);
     if (articleMatch) {
       window.gtag?.("event", "view_article", {
@@ -142,8 +95,8 @@ export function AnalyticsConsentManager() {
       if (!anchor) return;
       const href = anchor.getAttribute("href") || "";
       const location = anchor.closest("header") ? "header" : anchor.closest("footer") ? "footer" : "page";
-      if (/^https?:\/\/(?:www\.)?(?:wa\.me|api\.whatsapp\.com)\//i.test(href)) trackContactClick("whatsapp", location);
-      else if (/^tel:/i.test(href)) trackContactClick("telephone", location);
+      // Links WhatsApp são medidos pelo GTM existente, por advogado.
+      if (/^tel:/i.test(href)) trackContactClick("telephone", location);
       else if (/^mailto:/i.test(href)) trackContactClick("email", location);
     };
     document.addEventListener("click", handleClick);
@@ -162,10 +115,10 @@ export function AnalyticsConsentManager() {
     lastPageRef.current = null;
     if (value === "accepted") {
       setAnalyticsReady(false);
-      void loadGoogleAnalytics()
+      void loadGoogleTagManager("accepted")
         .then(() => setAnalyticsReady(true))
         .catch((error) => {
-          console.error("[Analytics] Falha ao carregar o GA4.", error);
+          console.error("[Analytics] Falha ao carregar o GTM.", error);
           setAnalyticsReady(false);
         });
     } else {

@@ -46,6 +46,26 @@ test('sends accepted contact events only to the established property', () => {
   assert.deepEqual(Object.keys(calls[0][2]).sort(), ['contact_channel', 'contact_location', 'page_path', 'send_to']);
 });
 
+test('loads only the established GTM once and only after acceptance', async () => {
+  const { api, scripts, window } = setup();
+  assert.equal(typeof api.loadGoogleTagManager, 'function');
+  await api.loadGoogleTagManager('rejected');
+  await api.loadGoogleTagManager(null);
+  assert.equal(scripts.length, 0);
+  const first = api.loadGoogleTagManager('accepted');
+  const repeated = api.loadGoogleTagManager('accepted');
+  assert.equal(first, repeated);
+  assert.equal(scripts.length, 1);
+  assert.equal(scripts[0].src, 'https://www.googletagmanager.com/gtm.js?id=GTM-KTV9BVKV');
+  assert.equal(window.dataLayer.filter(v => v.event === 'gtm.js').length, 1);
+  assert.equal(window.dataLayer[0][2].analytics_storage, 'granted');
+  assert.equal(window.dataLayer[0][2].ad_storage, 'denied');
+  scripts[0].handlers.load();
+  await first;
+  await api.loadGoogleTagManager('accepted');
+  assert.equal(scripts.length, 1);
+});
+
 test('preserves denied analytics and advertising consent defaults', () => {
   const { api, window } = setup();
   vm.runInNewContext(api.GOOGLE_CONSENT_DEFAULT_SCRIPT, { window });
