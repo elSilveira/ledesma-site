@@ -1,4 +1,4 @@
-export const GA_MEASUREMENT_ID = "G-F954XFDV9M";
+export const GA_MEASUREMENT_ID = "G-QZ8X5K9V2R";
 export const ANALYTICS_CONSENT_KEY = "ledesma-consent-v1";
 export const OPEN_COOKIE_PREFERENCES_EVENT = "ledesma:open-cookie-preferences";
 
