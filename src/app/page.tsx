@@ -151,8 +151,7 @@ export default function Home() {
         <div className="container-site relative grid gap-14 lg:grid-cols-2 lg:items-center">
           <SectionHeading id="escritorio-titulo" eyebrow="O escritório" title="Duas sedes, uma mesma forma de trabalhar">
             <p>
-              A Ledesma Advocacia S/S atua nas áreas criminal, trabalhista e previdenciária, com sedes em Toledo, no Paraná, e em Iguatemi, no Mato Grosso do
-              Sul, e atendimento também a distância.
+              A Ledesma Advocacia S/S atua nas áreas criminal, trabalhista, previdenciária e de família e sucessões, com atendimento presencial nas sedes de Toledo (PR) e Iguatemi (MS), e atendimento também a distância.
             </p>
             <div className="mt-8">
               <ButtonLink href="/o-escritorio" variant="outline">

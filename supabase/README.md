@@ -58,7 +58,7 @@ e clique em **Run**. Um arquivo por vez.
 
 ```bash
 npx supabase login
-npx supabase link --project-ref <id-do-projeto>
+npx supabase link --project-ref nsekingemfkvfuzwwqcs
 npx supabase db push
 ```
 
