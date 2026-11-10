@@ -13,6 +13,8 @@ import {
 } from "@/lib/analytics";
 
 const GA_SCRIPT_ID = "google-analytics-4";
+let analyticsLoadPromise: Promise<void> | null = null;
+let analyticsConfigured = false;
 
 function initializeGtag() {
   window.dataLayer = window.dataLayer || [];
@@ -21,19 +23,47 @@ function initializeGtag() {
   };
 }
 
-function loadGoogleAnalytics() {
+function loadGoogleAnalytics(): Promise<void> {
   initializeGtag();
-  window.gtag?.("consent", "update", { analytics_storage: "granted" });
-  window.gtag?.("js", new Date());
-  // O efeito de rota envia a visualização; o page_view automático ficaria duplicado.
-  window.gtag?.("config", GA_MEASUREMENT_ID, { send_page_view: false });
-  if (!document.getElementById(GA_SCRIPT_ID)) {
-    const script = document.createElement("script");
-    script.id = GA_SCRIPT_ID;
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script);
+  window.gtag?.("consent", "update", {
+    analytics_storage: "granted",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+  if (!analyticsConfigured) {
+    window.gtag?.("js", new Date());
+    // O efeito de rota envia a visualização; o page_view automático ficaria duplicado.
+    window.gtag?.("config", GA_MEASUREMENT_ID, { send_page_view: false });
+    analyticsConfigured = true;
   }
+  if (!analyticsLoadPromise) {
+    analyticsLoadPromise = new Promise((resolve, reject) => {
+      const existing = document.getElementById(GA_SCRIPT_ID) as HTMLScriptElement | null;
+      if (existing?.dataset.loaded === "true") {
+        resolve();
+        return;
+      }
+      const script = existing || document.createElement("script");
+      const onLoad = () => {
+        script.dataset.loaded = "true";
+        resolve();
+      };
+      const onError = () => {
+        script.remove();
+        analyticsLoadPromise = null;
+        reject(new Error("Não foi possível carregar o Google Analytics."));
+      };
+      script.addEventListener("load", onLoad, { once: true });
+      script.addEventListener("error", onError, { once: true });
+      if (existing) return;
+      script.id = GA_SCRIPT_ID;
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+      document.head.appendChild(script);
+    });
+  }
+  return analyticsLoadPromise;
 }
 
 function removeGoogleAnalyticsCookies() {
@@ -52,19 +82,20 @@ export function AnalyticsConsentManager() {
   const [consent, setConsent] = useState<AnalyticsConsent | null>(null);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [analyticsReady, setAnalyticsReady] = useState(false);
   const lastPageRef = useRef<string | null>(null);
 
   useEffect(() => {
     initializeGtag();
-    window.gtag?.("consent", "default", {
-      analytics_storage: "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
-      wait_for_update: 500,
-    });
     const saved = getAnalyticsConsent();
-    if (saved === "accepted") loadGoogleAnalytics();
+    if (saved === "accepted") {
+      void loadGoogleAnalytics()
+        .then(() => setAnalyticsReady(true))
+        .catch((error) => {
+          console.error("[Analytics] Falha ao carregar o GA4.", error);
+          setAnalyticsReady(false);
+        });
+    }
     // Aguarda a hidratação para refletir uma preferência que existe apenas no navegador.
     queueMicrotask(() => {
       setConsent(saved);
@@ -83,11 +114,12 @@ export function AnalyticsConsentManager() {
   }, []);
 
   useEffect(() => {
-    if (consent !== "accepted") return;
+    if (consent !== "accepted" || !analyticsReady) return;
     const pagePath = `${window.location.pathname}${window.location.search}`;
     if (lastPageRef.current === pagePath) return;
     lastPageRef.current = pagePath;
     window.gtag?.("event", "page_view", {
+      send_to: GA_MEASUREMENT_ID,
       page_title: document.title,
       page_location: window.location.href,
       page_path: pagePath,
@@ -95,12 +127,13 @@ export function AnalyticsConsentManager() {
     const articleMatch = pathname.match(/\/artigos\/([^/]+)\/?$/);
     if (articleMatch) {
       window.gtag?.("event", "view_article", {
+        send_to: GA_MEASUREMENT_ID,
         article_slug: decodeURIComponent(articleMatch[1]),
         page_title: document.title,
         page_path: pagePath,
       });
     }
-  }, [consent, pathname]);
+  }, [analyticsReady, consent, pathname]);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -127,8 +160,16 @@ export function AnalyticsConsentManager() {
     setAnalyticsEnabled(value === "accepted");
     setPreferencesOpen(false);
     lastPageRef.current = null;
-    if (value === "accepted") loadGoogleAnalytics();
-    else {
+    if (value === "accepted") {
+      setAnalyticsReady(false);
+      void loadGoogleAnalytics()
+        .then(() => setAnalyticsReady(true))
+        .catch((error) => {
+          console.error("[Analytics] Falha ao carregar o GA4.", error);
+          setAnalyticsReady(false);
+        });
+    } else {
+      setAnalyticsReady(false);
       initializeGtag();
       window.gtag?.("consent", "update", { analytics_storage: "denied" });
       removeGoogleAnalyticsCookies();

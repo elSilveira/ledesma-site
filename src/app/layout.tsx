@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { RevealObserver } from "@/components/RevealObserver";
 import { site } from "@/config/site";
 import { OG_IMAGE, organizationJsonLd } from "@/lib/seo";
+import { GOOGLE_CONSENT_DEFAULT_SCRIPT } from "@/lib/analytics";
 import "./globals.css";
 
 // Tipografia institucional do site atual da Ledesma Advocacia
@@ -58,6 +59,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${ptSerif.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <head>
+        {/* Consent Mode v2 precisa existir antes de qualquer possível tag Google. */}
+        <script dangerouslySetInnerHTML={{ __html: GOOGLE_CONSENT_DEFAULT_SCRIPT }} />
         {/* Habilita as animações de revelação apenas quando há JavaScript */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
