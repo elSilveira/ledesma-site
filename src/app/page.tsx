@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { AreaCard } from "@/components/AreaCard";
 import { ArticleCard } from "@/components/ArticleCard";
-import { ButtonLink } from "@/components/Button";
+import { ButtonLink, buttonClasses } from "@/components/Button";
+import { EscolherAdvogado } from "@/components/EscolherAdvogado";
 import { ContactBand } from "@/components/ContactBand";
 import { HomeNews } from "@/components/HomeNews";
 import { Icon, type IconName } from "@/components/icons";
@@ -51,7 +52,10 @@ export default function Home() {
               Atuação em Direito Criminal, Direito Trabalhista, Direito Previdenciário e Direito de Família e Sucessões, com atendimento presencial nas sedes e também a distância.
             </p>
             <div className="hero-rise mt-10 flex flex-wrap gap-4" style={delay(360)}>
-              <ButtonLink href="/contato">Fale com o escritório</ButtonLink>
+              <EscolherAdvogado className={buttonClasses("primary")}>
+                <span>Fale com o escritório</span>
+                <Icon name="seta" className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+              </EscolherAdvogado>
               <ButtonLink href="/areas-de-atuacao" variant="outline">
                 Áreas de atuação
               </ButtonLink>
